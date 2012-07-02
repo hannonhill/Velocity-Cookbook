@@ -11,7 +11,8 @@
 #set ( $landing = "index" )
 
 ## Separation character
-#set ( $separation = '<li class="' + ${liClass} + '">&#187;</li>' )
+#set ( $char = "&#187;" )
+#set ( $separation = '<li class="' + ${liClass} + '">${char}</li>' )
 
 
 ## Macro for displaying folder
