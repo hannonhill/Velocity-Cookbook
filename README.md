@@ -7,3 +7,4 @@ List of current resources:
 
 * [Direct Edit](https://github.com/hannonhill/Velocity-Cookbook/tree/master/Direct-Edit)
 * [Site Map](https://github.com/hannonhill/Velocity-Cookbook/tree/master/Site-Map)
+* [Breadcrumbs](https://github.com/hannonhill/Velocity-Cookbook/tree/master/Breadcrumbs)
