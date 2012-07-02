@@ -1,0 +1,104 @@
+## Value for 'id' attribute of root <ul>
+#set ( $ulID = "" )
+
+## Class for each <li> element
+#set ( $liClass = "" )
+
+## Include root page (Home) in output
+#set ( $includeRoot = true )
+
+## Folder landing page name (default page served)
+#set ( $landing = "index" )
+
+## Separation character
+#set ( $separation = '<li class="' + ${liClass} + '">&#187;</li>' )
+
+
+## Macro for displaying folder
+#macro ( showFolder $folder )
+	## Grab folder "display-name"
+	#set ( $folderDisplayName = $folder.getChild("display-name") )
+
+	## Grab folder "title"
+	#set ( $folderTitle = $folder.getChild("title") )
+
+	#if ( $folderDisplayName && $folderDisplayName.value != "" )
+		#set ( $folderCrumb = $folderDisplayName )
+	#elseif ( $folderTitle && $folderTitle.value != "" )
+		#set ( $folderCrumb = $folderTitle )
+	#else
+		#set ( $folderCrumb = $folder.getChild("name") )
+	#end
+	
+	## Check for landing page
+	#if ( $_XPathTool.selectSingleNode($folder, "system-page[name='${landing}']") )
+		#set ( $hasLanding = true )
+		#set ( $folderPath = $_XPathTool.selectSingleNode($folder, "system-page[name='${landing}']/link").value )
+	#else
+		#set ( $hasLanding = false )
+	#end
+	
+	## Cascade Server version 6.10+
+	## Use $_SerializerTool.serialize($folderCrumb, true) for versions previous to 6.10
+	<li class="${liClass}">#if ( $hasLanding )<a href="${folderPath}">#end${_EscapeTool.xml($folderCrumb.value)}#if ( $hasLanding )</a>#end</li>
+	<!-- $folder.getChild("link").value -->
+#end
+
+## Macro for displaying page
+#macro ( showPage $page $makeLink )
+	## Grab page "display-name"
+	#set ( $pageDisplayName = $page.getChild("display-name") )
+	
+	## Grab page "title"
+	#set ( $pageTitle = $page.getChild("title") )
+
+	#if ( $pageDisplayName && $pageDisplayName.value != "" )
+		#set ( $pageCrumb = $pageDisplayName )
+	#elseif ( $pageTitle && $pageTitle.value != "" )
+		#set ( $pageCrumb = $pageTitle )
+	#else
+		#set ( $pageCrumb = $page.getChild("name") )
+	#end
+	
+	## Grab page "link"
+	#set ( $pagePath = $page.getChild("link").value )
+
+	## Cascade Server version 6.10+
+	## Use $_SerializerTool.serialize($pageCrumb, true) for versions previous to 6.10
+	<li class="${liClass}">#if ( $makeLink )<a href="${pagePath}">#end${_EscapeTool.xml($pageCrumb.value)}#if ( $makeLink )</a>#end</li>
+	<!-- $page.getChild("link").value -->
+#end
+
+
+## Abstract out the "system-index-block" node
+#set ( $sib = $_XPathTool.selectSingleNode($contentRoot, "/system-index-block") )
+
+## Gather "system-folder" node trail and exclude root "system-folder"
+#set ( $trail = $_XPathTool.selectNodes($sib, "//system-folder[descendant::system-page[@current]]") )
+
+## Reference the root "system-page" (Home)
+#set ( $rootPage = $_XPathTool.selectSingleNode($sib, "system-page[name='${landing}']") )
+
+## Reference the current "system-page"
+#set ( $currentPage = $_XPathTool.selectSingleNode($sib, "//system-page[@current]") )
+
+<ul id="${ulID}">
+
+## Check for including Home
+#if ( $includeRoot )
+	#showPage($rootPage, true)
+	${separation}
+#end
+
+## Build the crumb trail
+#if ( $trail.size() > 1 )
+	## Loop through crumbs
+	#foreach ( $crumb in $trail )
+		#showFolder($crumb)
+		${separation}
+	#end
+#end
+
+#showPage($currentPage, false)
+
+</ul>
