@@ -5,5 +5,5 @@ Dedicated repository for Velocity examples and resources for use inside of Casca
 
 List of current resources:
 
-* Direct Edit
-* Site Map
+* [Direct Edit](https://github.com/hannonhill/Velocity-Cookbook/tree/master/Direct-Edit)
+* [Site Map](https://github.com/hannonhill/Velocity-Cookbook/tree/master/Site-Map)
