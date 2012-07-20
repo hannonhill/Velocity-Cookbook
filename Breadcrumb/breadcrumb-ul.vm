@@ -1,0 +1,52 @@
+#set ( $defaultPage = "index" )
+#set ( $separator = "&#187;" )
+#set ( $ulID = "myID" )
+#set ( $liClass = "myClass" )
+
+## Gather items for breadcrumb
+#set ( $trail = $_XPathTool.selectNodes($contentRoot, "//system-folder") )
+## Reference the current page
+#set ( $page = $_XPathTool.selectSingleNode($contentRoot, "//system-page[@current]") )
+
+<ul id="${ulID}">
+
+## Define a loop
+#foreach ( $crumb in $trail )
+    ## Reference to the display-name node
+    #set ( $folderDisplayName = $crumb.getChild("display-name") )
+    
+    #if ( $folderDisplayName && $folderDisplayName.value != "" )
+		#set ( $theFolderTitle = $folderDisplayName )
+	#else
+		#set ( $theFolderTitle = $crumb.getChild("name") )
+	#end
+    
+    ## Value of the link node
+    #set ( $link = $crumb.getChild("link").value )
+    
+    ## Check for 'current' attribute
+    #if ( $crumb.getAttribute("current") )
+        ## Test page name
+        #if ( $page.getChild("name").value == "${defaultPage}" )
+            <li class="${liClass}">$_EscapeTool.xml($theFolderTitle.value)</li>
+        #else
+            <li class="${liClass}"><a href="${link}/${defaultPage}">$_EscapeTool.xml($theFolderTitle.value)</a></li>
+            <li class="${liClass}">${separator}</li>
+            
+		    ## Reference to the display-name node
+		    #set ( $pageDisplayName = $page.getChild("display-name") )
+		    
+		    #if ( $pageDisplayName && $pageDisplayName.value != "" )
+				#set ( $thePageTitle = $pageDisplayName )
+			#else
+				#set ( $thePageTitle = $page.getChild("name") )
+			#end
+            <li class="${liClass}">$_EscapeTool.xml($thePageTitle.value)</li>
+        #end
+    #else
+        <li class="${liClass}"><a href="${link}/${defaultPage}">$_EscapeTool.xml($theFolderTitle.value)</a></li>
+        <li class="${liClass}">${separator}</li>
+    #end
+#end
+
+</ul>
