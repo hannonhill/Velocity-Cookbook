@@ -1,0 +1,56 @@
+<system-data-structure>
+	<text type="dropdown" identifier="type" label="Widget Type" default="Profile" required="true">	
+		<dropdown-item value="Profile"/>	
+		<dropdown-item value="Search"/>	
+		<dropdown-item value="Faves"/>	
+	</text>
+	<text identifier="username" label="Username" size="35" help-text="Applicable only for Profile and List widgets."/>	
+	<text identifier="query" label="Search Query" size="35" help-text="Applicable only for Search widget. Note: retweets are not included by default"/>	
+	<text identifier="title" label="Title" size="35" help-text="Applicable only for Search and Faves widgets."/>	
+	<text identifier="caption" label="Caption" size="35" help-text="Applicable only for Search and Faves widgets."/>
+
+	<group identifier="dimensions" label="Widget Dimensions" collapsed="true">	
+		<text identifier="height" label="Height (in px)" default="300" regular-expression="[0-9]+" size="15"/>	
+		<text identifier="width" label="Width (in px)" default="300" regular-expression="[0-9]+" size="15"/>	
+		<text type="checkbox" identifier="auto-width" label="-OR- Auto Width">	
+				<checkbox-item value="Yes"/>	
+		</text>	
+	</group>
+
+	<group identifier="preferences" label="Preferences" collapsed="true">	
+		<text type="checkbox" identifier="live" label="Poll for new results?">		
+			<checkbox-item value="Yes"/>		
+		</text>		
+		<text type="checkbox" identifier="scrollbar" label="Include scrollbar?">		
+			<checkbox-item value="Yes"/>		
+		</text>		
+		<text type="dropdown" identifier="behavior" label="Behavior" default="Timed Interval">		
+			<dropdown-item value="Timed Interval"/>		
+			<dropdown-item value="Load all tweets"/>		
+		</text>		
+		<text type="checkbox" identifier="loop" label="Loop results?" help-text="Applicable with Timed Interval Only">		
+			<checkbox-item value="Yes"/>		
+		</text>		
+		<text identifier="interval" label="Tweet Interval?" default="30" regular-expression="^[^0][0-9]+" size="5" help-text="Applicable with Timed Interval only"/>		
+		<text identifier="rpp" label="Number of Tweets" default="4" size="3"/>		
+		<group identifier="advanced" label="Advanced">		
+			<text type="checkbox" identifier="hashtags" label="Show hashtags?">		
+				<checkbox-item value="Yes" checked="true"/>		
+			</text>		
+			<text type="checkbox" identifier="avatars" label="Show avatars?">		
+				<checkbox-item value="Yes"/>		
+			</text>		
+			<text type="checkbox" identifier="fullscreen" label="Fullscreen mode?">				
+				<checkbox-item value="Yes"/>			
+			</text>		
+		</group>	
+	</group>
+
+	<group identifier="appearance" label="Appearance" collapsed="true">	
+		<text identifier="shell-background" label="Shell Background" default="#0088cc" regular-expression="#[0-9a-zA-Z]{3,6}$" size="15"/>		
+		<text identifier="shell-text" label="Shell Text" default="#fff" regular-expression="#[0-9a-zA-Z]{3,6}$" size="15"/>		
+		<text identifier="tweet-background" label="Tweet Background" default="#fff" regular-expression="#[0-9a-zA-Z]{3,6}$" size="15"/>		
+		<text identifier="tweet-text" label="Tweet Text" default="#333" regular-expression="#[0-9a-zA-Z]{3,6}$" size="15"/>		
+		<text identifier="link-text" label="Link Text" default="#c99826" regular-expression="#[0-9a-zA-Z]{3,6}$" size="15"/>	
+	</group>
+</system-data-structure>
