@@ -2,24 +2,27 @@ The combination of the Twitter Widget Data Definition and Velocity Format will p
 
 More information about Twitter Widgets and the available options can be found [here](https://twitter.com/about/resources/widgets).
 
-**twitter-widget-dd.xml**
-
+twitter-widget-dd.xml
+========
 * The Data Definition to be used for Twitter Widget Structured Data Blocks.
 
-**twitter-widget.vm**
-
+twitter-widget.vm
+========
 * Creates a Twitter Widget based on Structured Data from the Data Definition above.
 
-**Usage:** 
+Usage
+========
 1. Create a new Structured Data Block using the Twitter Widget Data Definition
 2. Attach both the Structured Data Block and Velocity Format to a Template Region.
 
-**Available Widget Types**
+Available Widget Types
+========
 * **Profile:** Display your most recent Twitter updates on any webpage.
 * **Search:** Displays search results based on search query.
 * **Faves:** Displays your favorite tweets.
 
-**Fields/Options**
+Fields/Options
+========
 * **Username:** required for Profile and Faves widgets. Enter the Twitter username you wish to display tweets for.
 * **Query:** required for Search widget. Enter the the desired query to search Twitter.  Advanced search examples can be found [here](https://support.twitter.com/articles/71577).
 * **Title/Caption:** applicable for Search and Faves widgets. Displays title and caption text in the header of the widget
