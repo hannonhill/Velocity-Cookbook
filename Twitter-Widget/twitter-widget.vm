@@ -2,15 +2,21 @@
 
 ## Basic Required Setup Information
 #set ( $wType = $widgetSDS.getChild('type').value.toLowerCase() )
-#set ( $wUsername = $widgetSDS.getChild('username').value )
-#set ( $wQuery = $widgetSDS.getChild('query').value)
+#set ( $wUsername = $widgetSDS.getChild('username') )
+#set ( $wQuery = $widgetSDS.getChild('query') )
 
 ## Check for required fields based on type of widget.
 #set ( $wValidWidgetSettings = false )
-#if ( ($wType == 'profile' || $wType == 'faves') && $wUsername != '' ) 
+#if ( ($wType == 'profile' || $wType == 'faves') && $wUsername && $wUsername.value != '' ) 
     #set ( $wValidWidgetSettings = true )
-#elseif( $wType == 'search' && $wQuery && $wQuery != '' )
+    
+   	## Using .java because the $wSetUserMethod string being built below uses double quotes.    
+    #set ( $wUsername = $_EscapeTool.java($wUsername.value) )
+#elseif( $wType == 'search' && $wQuery && $wQuery.value != '' )
     #set ( $wValidWidgetSettings = true )
+    
+   	## Using .java because the string being built below for searching uses double quotes.        
+    #set ( $wQuery = $_EscapeTool.java($wQuery.value) )
 #end
 
 ## Make sure we have the required information before proceeding to build widget.
@@ -18,6 +24,7 @@
     ## The Rest of the Widget Setup Information
     #set ( $wTitle = $widgetSDS.getChild('title').value)
     #if ( $wTitle && $wTitle != '' )
+    	## Using .java because the string being built below uses double quotes.
         #set ( $wTitle = $_EscapeTool.java($wTitle))
     #else
         #set ( $wTitle = '')
@@ -25,6 +32,7 @@
     
     #set ( $wCaption = $widgetSDS.getChild('caption').value)
     #if ( $wCaption && $wCaption != '' )
+    	## Using .java because the string being built below uses double quotes.    
         #set ( $wCaption = $_EscapeTool.java($wCaption))
     #else
         #set ( $wCaption = '')
@@ -37,7 +45,7 @@
         ## options during initialization. See https://support.twitter.com/articles/71577 for
         ## advanced search examples.
         
-        #set ( $wAdditionalParams = "search: '${_EscapeTool.java($wQuery)}'," )
+        #set ( $wAdditionalParams = "search: '${wQuery}'," )
         #set ( $wAdditionalParams = $wAdditionalParams + "title: '${wTitle}'," )
         #set ( $wAdditionalParams = $wAdditionalParams + "subject: '${wCaption}'," )
     #elseif ( $wType == 'faves' )
@@ -58,53 +66,46 @@
     #set ( $wPreferences = $widgetSDS.getChild('preferences') )
     #set ( $wPreferencesAdvanced = $wPreferences.getChild('advanced') )
     
-    #set ( $wLive = $wPreferences.getChild('live').value )
-    #if ( $wLive == 'Yes' )
+    #if ( $wPreferences.getChild('live').value == 'Yes' )
         #set ( $wLive = true )
     #else 
         #set ( $wLive = false )
     #end
     
-    #set ( $wScrollbar = $wPreferences.getChild('scrollbar').value )
-    #if ( $wScrollbar == 'Yes' )
+    #if ( $wPreferences.getChild('scrollbar').value == 'Yes' )
         #set ( $wScrollbar = true )
     #else 
         #set ( $wScrollbar = false )
     #end
     
-    #set ( $wBehavior = $wPreferences.getChild('behavior').value )
-    #if ( $wBehavior == 'Load all tweets' )
+    #if ( $wPreferences.getChild('behavior').value == 'Load all tweets' )
         #set ( $wBehavior = 'all' )
     #else 
         #set ( $wBehavior = 'default' )
     #end
     
-    #set ( $wLoop = $wPreferences.getChild('loop').value )
-    #if ( $wBehavior == 'default' && $wLoop == 'Yes' )
+    #if ( $wBehavior == 'default' && $wPreferences.getChild('loop').value == 'Yes' )
         #set ( $wLoop = true )
     #else 
         #set ( $wLoop = false )
     #end
     
-    #set ( $wInterval = $wPreferences.getChild('interval').value )
+    #set ( $wInterval = $wPreferences.getChild('interval').value )    
     #set ( $wRpp = $wPreferences.getChild('rpp').value )
     
-    #set ( $wHashtags = $wPreferencesAdvanced.getChild('hashtags').value )
-    #if ( $wHashtags == 'Yes' )
+    #if ( $wPreferencesAdvanced.getChild('hashtags').value == 'Yes' )
         #set ( $wHashtags = true )
     #else 
         #set ( $wHashtags = false )
     #end
     
-    #set ( $wAvatars = $wPreferencesAdvanced.getChild('avatars').value )
-    #if ( $wAvatars == 'Yes' )
+    #if ( $wPreferencesAdvanced.getChild('avatars').value == 'Yes' )
         #set ( $wAvatars = true )
     #else 
         #set ( $wAvatars = false )
     #end
     
-    #set ( $wFullscreen = $wPreferencesAdvanced.getChild('fullscreen').value )
-    #if ( $wFullscreen == 'Yes' )
+    #if ( $wPreferencesAdvanced.getChild('fullscreen').value == 'Yes' )
         #set ( $wFullscreen = true )
     #else 
         #set ( $wFullscreen = false )
@@ -112,23 +113,23 @@
     
     ## Appearance
     #set ( $wAppearance = $widgetSDS.getChild('appearance') )
-    #set ( $wShellBg = $wAppearance.getChild('shell-background').value )
-    #set ( $wShellColor = $wAppearance.getChild('shell-text').value )
-    #set ( $wTweetBg = $wAppearance.getChild('tweet-background').value )
-    #set ( $wTweetColor = $wAppearance.getChild('tweet-text').value )
-    #set ( $wLinkColor = $wAppearance.getChild('link-text').value )
+    #set ( $wShellBg = $_EscapeTool.javascript($wAppearance.getChild('shell-background').value) )
+    #set ( $wShellColor = $_EscapeTool.javascript($wAppearance.getChild('shell-text').value) )
+    #set ( $wTweetBg = $_EscapeTool.javascript($wAppearance.getChild('tweet-background').value) )
+    #set ( $wTweetColor = $_EscapeTool.javascript($wAppearance.getChild('tweet-text').value) )
+    #set ( $wLinkColor = $_EscapeTool.javascript($wAppearance.getChild('link-text').value) )
 
     ## Widget Dimensions
     #set ( $wDimensions = $widgetSDS.getChild('dimensions') )
-    #set ( $wHeight = $wDimensions.getChild('height').value )
-    #set ( $wWidth = $wDimensions.getChild('width').value )
+    #set ( $wHeight = $_EscapeTool.javascript($wDimensions.getChild('height').value) )
+    #set ( $wWidth = $_EscapeTool.javascript($wDimensions.getChild('width').value) )
     #if ( $wDimensions.getChild('auto-width').value == 'Yes' )
         #set ( $wWidth = "'auto'" )
     #end
     
     ## Display the Widget if we have the 
-    <script charset="utf-8" src="http://widgets.twimg.com/j/2/widget.js"></script>
-    <script>
+    <script type="text/javascript" charset="utf-8" src="http://widgets.twimg.com/j/2/widget.js"></script>
+    <script type="text/javascript">
         new TWTR.Widget({
             version: 2,
             type: '${wType}',
