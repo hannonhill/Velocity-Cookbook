@@ -42,6 +42,7 @@ Fields/Options
         * **Show hashtags:** defaults to true. Setting to false will hide hashtags.
         * **Show avatars:** defaults to false. Setting to true will show user avatars.
         * **Fullscreen mode:** defaults to false. Setting to true will give you a full viewport sized widget.
+        * More info about advanced preferences can be found [here](http://www.dustindiaz.com/twitter-widget-doc/).
 * **Appearance**
     * **Shell Background:** defaults to #0088cc. Background color of the widget's header and footer area.
     * **Shell Text:** defaults to #fff. Text color of the widget's header and footer area.
