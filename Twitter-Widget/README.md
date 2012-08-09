@@ -35,17 +35,18 @@ Fields/Options
     * **Behavior:** defaults to Timed Interval. 
         * **Timed Interval:** displays tweets based on the Timed Interval and Loop fields.
         * **Load all tweets:** displays all tweets at once.
-    * **Loop results*:** applicable for Timed Interval Behavior; defaults to false. Loop through the resulting tweets.
+    * **Loop results:** applicable for Timed Interval Behavior; defaults to false. Loop through the resulting tweets.
     * **Tweet Interval:** applicable for Timed Interval Behavior; defaults to 30. Interval for displaying new tweets.
     * **Number of Tweets:** defaults to 4. Number of tweets to display within the widget.           
     * **Advanced preferences**
         * **Show hashtags:** defaults to true. Setting to false will hide hashtags.
         * **Show avatars:** defaults to false. Setting to true will show user avatars.
         * **Fullscreen mode:** defaults to false. Setting to true will give you a full viewport sized widget.
+        * More info about advanced preferences can be found [here](http://www.dustindiaz.com/twitter-widget-doc/).
 * **Appearance**
-	* All colors should be valid Hex Values (eg #000 or #000000)
     * **Shell Background:** defaults to #0088cc. Background color of the widget's header and footer area.
     * **Shell Text:** defaults to #fff. Text color of the widget's header and footer area.
     * **Tweet Background:** defaults to #fff. Background color of the tweet area.        
     * **Tweet Text:** defaults to #333. Text color of the tweet area.
 	* **Link Text:** defaults to #c99826. Text color of the links within the tweet area.    
+	* Note: All colors should be valid Hex Values (eg #000 or #000000)
