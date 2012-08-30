@@ -13,7 +13,7 @@
 ## Define a loop
 #foreach ( $crumb in $trail )
 	## Reference to the display-name node
-	#set ( $folderDisplayName = $crumb.getChild("display-name") )
+	#set ( $folderDisplayName = $_XPathTool.selectSingleNode($crumb, "dynamic-metadata[name='breadcrumb']/value") )
 	
 	#if ( $folderDisplayName && $folderDisplayName.value != "" )
 		#set ( $theFolderTitle = $folderDisplayName )
@@ -34,7 +34,7 @@
 			<li class="${liClass}">${separator}</li>
 			
 			## Reference to the display-name node
-			#set ( $pageDisplayName = $page.getChild("display-name") )
+			#set ( $pageDisplayName = $_XPathTool.selectSingleNode($page, "dynamic-metadata[name='breadcrumb']/value") )
 			
 			#if ( $pageDisplayName && $pageDisplayName.value != "" )
 				#set ( $thePageTitle = $pageDisplayName )
