@@ -1,0 +1,116 @@
+## Macro to check access
+#macro ( checkAccess $type $haystack )
+    #set ( $hasAccess = 0 )
+    #foreach ( $hay in $haystack )
+        #if ( $userGroups.contains($hay.getChild("name").value) && $hay.getChild("permission").value == $type )
+            #set ( $hasAccess = 1 )
+        #end
+    #end
+#end
+
+## Macro for displaying page
+#macro ( showPage $page )
+    ## Grab page "title"
+    #set ( $pageTitle = $page.getChild("title") )
+
+    #if ( $pageTitle && $pageTitle.value != "" )
+        #set ( $thePageTitle = $pageTitle )
+    #else
+        #set ( $thePageTitle = $page.getChild("name") )
+    #end
+
+    ## Get page location
+    #set ( $pageLoc = $page.getChild("link").value )
+
+    ## Cascade Server version 6.10+
+    ## Use $_SerializerTool.serialize($thePageTitle, true) for versions previous to 6.10
+    <a href="${pageLoc}">$_EscapeTool.xml($thePageTitle.value)</a>
+    <!-- $page.getChild("link").value -->
+#end
+
+## Macro for displaying folder
+#macro ( showFolder $folder )
+    ## Grab folder "title"
+    #set ( $folderTitle = $folder.getChild("title") )
+
+    #if ( $folderTitle && $folderTitle.value != "" )
+        #set ( $theFolderTitle = $folderTitle )
+    #else
+        #set ( $theFolderTitle = $folder.getChild("name") )
+    #end
+
+    ## Cascade Server version 6.10+
+    ## Use $_SerializerTool.serialize($theFolderTitle, true) for versions previous to 6.10
+    $_EscapeTool.xml($theFolderTitle.value)
+    <!-- $folder.getChild("link").value -->
+
+    ## Check for child folders
+    #set ( $subfolders = $_XPathTool.selectNodes($folder, "system-page | system-folder[descendant::system-page]") )
+    #if ( $subfolders.size() > 0 )
+        #loopFolder($subfolders)
+    #end
+#end
+
+## Macro for processing folder
+#macro ( loopFolder $theFolder )
+    ## Check for assets
+    #if ( $theFolder.size() > 0 )
+        <ul>
+        ## Loop through folder
+        #foreach ( $item in $theFolder )
+            #checkAccess("write", $_XPathTool.selectNodes($item, "access-rights/group"))
+            #if ( $hasAccess == 1 )
+                <li>
+                ## Check item type
+                #if ( $item.getName() == "system-page" )
+                    #showPage($item)
+                #else ## You're working with another folder
+                    #showFolder($item)
+                    #loopFolder($item)
+                #end
+                </li>
+            #end
+        #end
+        </ul>
+    #end
+#end
+
+
+
+## Reference the 'system-index-block' node
+#set ( $sib = $_XPathTool.selectSingleNode($contentRoot, "/system-index-block") )
+
+## Reference the 'user-information' node
+#set ( $userInfo = $_XPathTool.selectSingleNode($sib, "user-information") )
+
+## Reference the username
+## Reference the full name
+## What groups is the user in
+#set ( $username = $userInfo.getChild("username").value )
+#set ( $fullname = $userInfo.getChild("full-name").value )
+#if ( $fullname != "" )
+    #set ( $userDisplayName = $fullname )
+#else
+    #set ( $userDisplayName = $username )
+#end
+#set ( $groups = $_XPathTool.selectNodes($userInfo, "groups/group") )
+#set ( $userGroups = "" )
+#foreach ( $group in $groups )
+    #set ( $userGroups = $userGroups + $group.value )
+    #if ( $foreach.hasNext )
+        #set ( $userGroups = $userGroups + "|" )
+    #end
+#end
+
+## Gather items (folders or pages)
+#set ( $items = $_XPathTool.selectNodes($sib, "system-folder[descendant::system-page] | system-page") )
+
+## Make the map
+#if ( $items.size() > 0 )
+<div class="post">
+    <h2 class="title">Content "${userDisplayName}" can edit</h2>
+    <div class="entry">
+        #loopFolder($items)
+    </div>
+</div>
+#end
