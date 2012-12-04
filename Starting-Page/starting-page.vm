@@ -107,10 +107,6 @@
 
 ## Make the map
 #if ( $items.size() > 0 )
-<div class="post">
-    <h2 class="title">Content "${userDisplayName}" can edit</h2>
-    <div class="entry">
-        #loopFolder($items)
-    </div>
-</div>
+	<h1>Content "${userDisplayName}" can edit</h1>
+	#loopFolder($items)
 #end
