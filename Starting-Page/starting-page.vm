@@ -24,10 +24,10 @@
 #end
 
 #set ( $accessType  = "write" )
-#set ( $accessCheck = "access-rights[group[contains('$userGroups',name)][permission='$accessType']]" )
+#set ( $accessCheck = "access-rights[group[contains('${userGroups}',name)][permission='${accessType}']]" )
 
 ## Gather items (folders or pages)
-#set ( $items = $_XPathTool.selectNodes($sib, "system-folder[descendant::system-page[$accessCheck]] | system-page[$accessCheck]") )
+#set ( $items = $_XPathTool.selectNodes($sib, "system-folder[descendant::system-page[${accessCheck}]] | system-page[${accessCheck}]") )
 
 ## Make the map
 #if ( $items.size() > 0 )
