@@ -1,12 +1,41 @@
-## Macro to check access
-#macro ( checkAccess $type $haystack )
-    #set ( $hasAccess = 0 )
-    #foreach ( $hay in $haystack )
-        #if ( $userGroups.contains($hay.getChild("name").value) && $hay.getChild("permission").value == $type )
-            #set ( $hasAccess = 1 )
-        #end
+## Reference the 'system-index-block' node
+#set ( $sib = $_XPathTool.selectSingleNode($contentRoot, "/system-index-block") )
+
+## Reference the 'user-information' node
+#set ( $userInfo = $_XPathTool.selectSingleNode($sib, "user-information") )
+
+## Reference the username
+## Reference the full name
+## What groups is the user in
+#set ( $username = $userInfo.getChild("username").value )
+#set ( $fullname = $userInfo.getChild("full-name").value )
+	#if ( $fullname != "" )
+	    #set ( $userDisplayName = $fullname )
+	#else
+	    #set ( $userDisplayName = $username )
+	#end
+#set ( $groups = $_XPathTool.selectNodes($userInfo, "groups/group") )
+#set ( $userGroups = "" )
+#foreach ( $group in $groups )
+    #set ( $userGroups = $userGroups + $group.value )
+    #if ( $foreach.hasNext )
+        #set ( $userGroups = $userGroups + "|" )
     #end
 #end
+
+#set ( $accessType  = "write" )
+#set ( $accessCheck = "access-rights[group[contains('$userGroups',name)][permission='$accessType']]" )
+
+## Gather items (folders or pages)
+#set ( $items = $_XPathTool.selectNodes($sib, "system-folder[descendant::system-page[$accessCheck]] | system-page[$accessCheck]") )
+
+## Make the map
+#if ( $items.size() > 0 )
+	<h1>Content you (${userDisplayName}) can edit</h1>
+	#loopFolder($items)
+#end
+
+
 
 ## Macro for displaying page
 #macro ( showPage $page )
@@ -45,7 +74,7 @@
     <!-- $folder.getChild("link").value -->
 
     ## Check for child folders
-    #set ( $subfolders = $_XPathTool.selectNodes($folder, "system-page | system-folder[descendant::system-page]") )
+    #set ( $subfolders = $_XPathTool.selectNodes($folder, "system-page[$accessCheck] | system-folder[descendant::system-page[$accessCheck]]") )
     #if ( $subfolders.size() > 0 )
         #loopFolder($subfolders)
     #end
@@ -58,8 +87,6 @@
         <ul>
         ## Loop through folder
         #foreach ( $item in $theFolder )
-            #checkAccess("write", $_XPathTool.selectNodes($item, "access-rights/group"))
-            #if ( $hasAccess == 1 )
                 <li>
                 ## Check item type
                 #if ( $item.getName() == "system-page" )
@@ -69,44 +96,7 @@
                     #loopFolder($item)
                 #end
                 </li>
-            #end
         #end
         </ul>
     #end
-#end
-
-
-
-## Reference the 'system-index-block' node
-#set ( $sib = $_XPathTool.selectSingleNode($contentRoot, "/system-index-block") )
-
-## Reference the 'user-information' node
-#set ( $userInfo = $_XPathTool.selectSingleNode($sib, "user-information") )
-
-## Reference the username
-## Reference the full name
-## What groups is the user in
-#set ( $username = $userInfo.getChild("username").value )
-#set ( $fullname = $userInfo.getChild("full-name").value )
-#if ( $fullname != "" )
-    #set ( $userDisplayName = $fullname )
-#else
-    #set ( $userDisplayName = $username )
-#end
-#set ( $groups = $_XPathTool.selectNodes($userInfo, "groups/group") )
-#set ( $userGroups = "" )
-#foreach ( $group in $groups )
-    #set ( $userGroups = $userGroups + $group.value )
-    #if ( $foreach.hasNext )
-        #set ( $userGroups = $userGroups + "|" )
-    #end
-#end
-
-## Gather items (folders or pages)
-#set ( $items = $_XPathTool.selectNodes($sib, "system-folder[descendant::system-page] | system-page") )
-
-## Make the map
-#if ( $items.size() > 0 )
-	<h1>Content you (${userDisplayName}) can edit</h1>
-	#loopFolder($items)
 #end
