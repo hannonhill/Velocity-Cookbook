@@ -1,0 +1,21 @@
+#*
+    Turns a non-negative number into an ordinal string used to denote the position in an
+    ordered sequence, such as 1st, 2nd, 3rd, 4th.
+
+    @param  $number the non-negative number
+*#
+#macro ( ordinalize $number)
+    #set ($number = $_NumberTool.integer($number))
+    #set ($numberStr = $number.toString())
+
+    #if (11 <= $number && $number <= 13)
+        ${numberStr}th
+    #else
+        #set ($remainder = $_MathTool.mod($number, 10))
+        #if ($remainder == 1) ${numberStr}st
+        #elseif ($remainder == 2) ${numberStr}nd
+        #elseif ($remainder == 3) ${numberStr}rd
+        #else ${numberStr}th
+        #end
+    #end
+#end
