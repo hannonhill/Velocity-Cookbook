@@ -10,5 +10,5 @@ List of current resources:
 * [Site Map](https://github.com/hannonhill/Velocity-Cookbook/tree/master/Site-Map)
 * [Starting Page](https://github.com/hannonhill/Velocity-Cookbook/tree/master/Starting-Page)
 * [Twitter Widget](https://github.com/hannonhill/Velocity-Cookbook/tree/master/Twitter-Widget)
-
+* [Useful Macros](https://github.com/hannonhill/Velocity-Cookbook/tree/master/Macros)
 
