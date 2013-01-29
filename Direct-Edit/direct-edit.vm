@@ -1,12 +1,19 @@
 ## System URL without a trailing slash
 #set ( $url = "http://localhost:8080" )
 
+## Get the system-page
+#set ( $page = $_XPathTool.selectSingleNode($contentRoot, "/system-index-block/calling-page/system-page") )
+
 ## Get the system-page 'id'
-#set ( $page = $_XPathTool.selectSingleNode($contentRoot, "/system-index-block/calling-page/system-page/@id") )
+#set ( $id = $page.getAttribute("id").value )
 
 ## Get the 'last-modified' date
 #set ( $last = $page.getChild("last-modified").value )
 #set ( $obj  = $_DateTool.getDate($last) )
-#set ( $date = $_DateTool.format("MM/dd/yyyy", $obj) )
 
-Last updated: <a href="${url}/entity/edit.act?type=page&amp;id=${$page}#highlight">${date}</a>
+#set ( $link = "${url}/entity/edit.act?type=page&amp;id=${id}#highlight" )
+
+<p>
+  Last updated:
+  <a href="${link}">$_DateTool.format("MM/dd/yyyy", $obj)</a>
+</p>
