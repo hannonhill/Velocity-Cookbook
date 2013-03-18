@@ -1,0 +1,7 @@
+#set ( $callingPageData = $_XPathTool.selectSingleNode($contentRoot, "/system-index-block/calling-page/system-page/system-data-structure") )
+<p>Name: $_SerializerTool.serialize($callingPageData.getChild("Name"), true) <br />
+Address: $callingPageData.getChild("Address").value <br />
+State: $callingPageData.getChild("State").value <br />
+Time Period: $callingPageData.getChild("Time_Period").getChild("value").value <br />
+Comments: $callingPageData.getChild("Comments").value <br />
+</p>

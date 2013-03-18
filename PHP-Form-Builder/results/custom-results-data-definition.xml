@@ -1,0 +1,18 @@
+<system-data-structure>
+  <text identifier="Name" label="Name"/>
+  <text identifier="Address" label="Address"/>
+  <text type="dropdown" identifier="State" label="State">
+    <dropdown-item value="CA"/>
+    <dropdown-item value="GA"/>
+    <dropdown-item value="NY"/>
+  </text>
+  <text type="radiobutton" identifier="Organization_Size" label="Organization Size">
+    <radio-item value="Less Than 50"/>
+    <radio-item value="51-200"/>
+    <radio-item value="200+"/>
+  </text>
+  <text type="checkbox" identifier="Time_Period" label="Time Period">
+    <checkbox-item value="I currently work here" checked="true"/>
+  </text>
+  <text multi-line="true" identifier="Comments" label="Comments"/>
+</system-data-structure>

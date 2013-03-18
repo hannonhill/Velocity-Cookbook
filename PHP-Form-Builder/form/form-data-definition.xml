@@ -1,0 +1,42 @@
+<system-data-structure>
+  <text type="checkbox" identifier="results" label="What should this form do with submissions?">
+    <checkbox-item value="send-email"/>
+    <checkbox-item value="save-to-excel"/>
+    <checkbox-item value="save-to-cms" checked="true"/>
+  </text>
+  <group identifier="resultsFile" label="IF saving results to CMS">
+    <asset type="page" identifier="form-config" label="Configuration Page" render-content-depth="10"/>
+    <asset type="file" identifier="formPath" label="Choose a file in the folder in which you want to save the file. NOTE: The file chosen will NOT be modified"/>
+    <text identifier="xmlFileName" label="Enter file name to be saved (skip the file extension)" default="Form"/>
+    <text type="radiobutton" identifier="dataDefType" label="Results Type" default="Generic" help-text="Data Definition Content Capture Type">
+      <radio-item value="Generic"/>
+      <radio-item value="Custom"/>
+    </text>
+  </group>
+  <group identifier="ifEmailing" label="IF results are to be Emailed">
+    <text identifier="fromAddress" label="Email address from which the emails will be sent" default="support@example.edu"/>
+    <text identifier="emailHeading" label="Email Subject (Title)" default="Form Information"/>
+    <text identifier="email-address" label="Email Address to receive results" multiple="true" regular-expression="/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/" input-data-format="name@company.com"/>
+  </group>
+  <text wysiwyg="true" identifier="opening" label="Form Instructions" required="true"/>
+  <group identifier="form_item" label="Form Item" multiple="true">
+    <text type="dropdown" identifier="type" label="Field Type" required="true">
+      <dropdown-item value="text"/>
+      <dropdown-item value="textarea"/>
+      <dropdown-item value="password"/>
+      <dropdown-item value="dropdown"/>
+      <dropdown-item value="checkbox"/>
+      <dropdown-item value="radio"/>
+      <dropdown-item value="hidden"/>
+    </text>
+    <text identifier="name" label="Name" required="true" help-text="The name of the field. Use [] if the field should belong to an array of fields (ie group of checkboxes)."/>
+    <text identifier="label" label="Label" help-text="Enter a more user-friendly label here if the text of the field's label should differ from the field name."/>
+    <text identifier="default_value" label="Default Value" help-text="The default value of the field. If supplied for non-text fields, this value will default to checked for checkbox/radio fields or selected for dropdown fields."/>
+    <text identifier="value" label="Value" multiple="true" help-text="Used for non-text fields. Defines a group of checkbox/radio fields or dropdown options."/>
+    <text type="checkbox" identifier="required" label="Required Field">
+      <checkbox-item value="Yes" checked="true"/>
+    </text>
+  </group>
+  <text identifier="submit_button_text" label="Submit Button Text" required="true"/>
+  <text wysiwyg="true" identifier="confirmation_text" label="Form Confirmation Text" required="true"/>
+</system-data-structure>

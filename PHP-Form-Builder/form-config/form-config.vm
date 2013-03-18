@@ -1,0 +1,5 @@
+#set ( $callingPageData = $_XPathTool.selectSingleNode($contentRoot, "/system-index-block/calling-page/system-page") )
+#set ( $formConfigContent = $_XPathTool.selectSingleNode($callingPageData, "system-data-structure"))
+Cascade Address = $formConfigContent.getChild("cascadeAddress").text <br />
+Username = $formConfigContent.getChild("username").text <br />
+Password = ******** <br />

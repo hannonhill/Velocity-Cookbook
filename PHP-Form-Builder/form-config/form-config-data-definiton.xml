@@ -1,0 +1,7 @@
+<system-data-structure>
+  <text identifier="username" label="Username" default="cascade"/>
+  <text identifier="password" label="Password" default="cascade"/>
+  <text identifier="cascadeAddress" label="Cascade Server URL (If adding a file to Cascade)" default="pathtocms.edu"/>
+  <text identifier="siteName" label="Site Name" default="example.edu"/>
+  <text identifier="contentTypePath" label="Content Type Path" default="example.edu:News Form Submission"/>
+</system-data-structure>
