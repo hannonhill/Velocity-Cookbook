@@ -13,7 +13,6 @@
     #if ($totalSegments > 0)
         #set ($intArray = [])
         #set ($output = "")
-
         ## Reverse the array of strings and convert it to integers.
         #foreach ($key in [0..$_MathTool.sub($totalSegments, 1)])
             #set ($int = $_MathTool.toInteger($segments.get($_MathTool.sub($totalSegments,$_MathTool.add($key,1))).replaceFirst("^0+(?!$)", "")))
@@ -22,50 +21,52 @@
             #end
             #set ($_void = $intArray.add($int))
         #end
-
-        ## Loop through each element and output the appropriate string.
-        #foreach ($key in [0..$intArray.size()])
-            #if ($key > $totalSegments) #break #end
-
-            #set ($seg = $intArray.get($key))
-            #set ($interval = "")
-
-            ## Make sure we have a valid segment.
-            #if ($seg && $seg > 0)
-                ## If the next segment in the array doesn't exist add it.
-                #set ($nextSegmentKey = $_MathTool.add($key, 1))
-                #if ($nextSegmentKey >= $totalSegments)
-                    #set ($_void = $intArray.add($nextSegmentKey, 0))
-                #end
-
-                ## Minutes
-                #if ($key == 0)
-                    ## Check to see if the minutes are greater than 60.
-                    ## If so, add to the hours value and update the minutes with the difference.
-                    #if ($seg > 60)
-                        #set ($numHours = $_MathTool.toInteger($_MathTool.div($seg, 60)))
-                        #set ($seg = $_MathTool.mod($seg, 60))
-                        #set ($_void = $intArray.set($nextSegmentKey, $_MathTool.add($intArray.get($nextSegmentKey), $numHours)))
+        
+        #if ($intArray.size() > 0)
+            ## Loop through each element and output the appropriate string.
+            #foreach ($key in [0..$intArray.size()])
+                #if ($key > $totalSegments || $key > $_MathTool.sub($intArray.size(),1)) #break #end
+    
+                #set ($seg = $intArray.get($key))
+                #set ($interval = "")
+    
+                ## Make sure we have a valid segment.            
+                #if ($seg && $seg > 0)               
+                    ## If the next segment in the array doesn't exist add it.
+                    #set ($nextSegmentKey = $_MathTool.add($key, 1))
+                    #if ($nextSegmentKey >= $totalSegments)
+                        #set ($_void = $intArray.add($nextSegmentKey, 0))
                     #end
-                    #set ($interval = $_DisplayTool.plural($seg,"minute"))
-                ## Hours
-                #elseif ($key == 1)
-                    ## Check to see if the minutes are greater than 60.
-                    ## If so, add to the hours value and update the minutes with the difference.
-                    #if ($seg > 24)
-                        #set ($numDays = $_MathTool.toInteger($_MathTool.div($seg, 24)))
-                        #set ($seg = $_MathTool.mod($seg, 24))
-                        #set ($_void = $intArray.set($nextSegmentKey, $_MathTool.add($intArray.get($nextSegmentKey), $numDays)))
+    
+                    ## Minutes
+                    #if ($key == 0) 
+                        ## Check to see if the minutes are greater than 60.
+                        ## If so, add to the hours value and update the minutes with the difference.
+                        #if ($seg > 60)
+                            #set ($numHours = $_MathTool.toInteger($_MathTool.div($seg, 60)))
+                            #set ($seg = $_MathTool.mod($seg, 60))
+                            #set ($_void = $intArray.set($nextSegmentKey, $_MathTool.add($intArray.get($nextSegmentKey), $numHours)))
+                        #end
+                        #set ($interval = $_DisplayTool.plural($seg,"minute"))
+                    ## Hours
+                    #elseif ($key == 1)
+                        ## Check to see if the minutes are greater than 60.
+                        ## If so, add to the hours value and update the minutes with the difference.
+                        #if ($seg > 24)
+                            #set ($numDays = $_MathTool.toInteger($_MathTool.div($seg, 24)))
+                            #set ($seg = $_MathTool.mod($seg, 24))
+                            #set ($_void = $intArray.set($nextSegmentKey, $_MathTool.add($intArray.get($nextSegmentKey), $numDays)))
+                        #end
+                        #set ($interval = $_DisplayTool.plural($seg,"hour"))
+                    ## Days
+                    #elseif ($key == 2)
+                        #set ($interval = $_DisplayTool.plural($seg,"day"))
                     #end
-                    #set ($interval = $_DisplayTool.plural($seg,"hour"))
-                ## Days
-                #elseif ($key == 2)
-                    #set ($interval = $_DisplayTool.plural($seg,"day"))
+                    
+                    ## Append to the front of the output string.
+                    #set ($output = "${seg} ${interval} ${output} ")
                 #end
-
-                ## Append to the front of the output string.
-                #set ($output = "${seg} ${interval} ${output} ")
-            #end
+            #end  
         #end
     #end
 
