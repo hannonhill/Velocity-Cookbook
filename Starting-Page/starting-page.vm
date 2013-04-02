@@ -1,49 +1,15 @@
-## Reference the 'system-index-block' node
-#set ( $sib = $_XPathTool.selectSingleNode($contentRoot, "/system-index-block") )
-
-## Reference the 'user-information' node
-#set ( $userInfo = $_XPathTool.selectSingleNode($sib, "user-information") )
-
-## Reference the username
-## Reference the full name
-## What groups is the user in
-#set ( $username = $userInfo.getChild("username").value )
-#set ( $fullname = $userInfo.getChild("full-name").value )
-	#if ( $fullname != "" )
-	    #set ( $userDisplayName = $fullname )
-	#else
-	    #set ( $userDisplayName = $username )
-	#end
-#set ( $groups = $_XPathTool.selectNodes($userInfo, "groups/group") )
-#set ( $userGroups = "" )
-#foreach ( $group in $groups )
-    #set ( $userGroups = $userGroups + $group.value )
-    #if ( $foreach.hasNext )
-        #set ( $userGroups = $userGroups + "|" )
-    #end
-#end
-
-#set ( $accessType  = "write" )
-#set ( $accessCheck = "access-rights[group[contains('${userGroups}',name)][permission='${accessType}']]" )
-
-## Gather items (folders or pages)
-#set ( $items = $_XPathTool.selectNodes($sib, "system-folder[descendant::system-page[${accessCheck}]] | system-page[${accessCheck}]") )
-
-## Make the map
-#if ( $items.size() > 0 )
-	<h1>Content you (${userDisplayName}) can edit</h1>
-	#loopFolder($items)
-#end
-
-
-
 ## Macro for displaying page
 #macro ( showPage $page )
     ## Grab page "title"
-    #set ( $pageTitle = $page.getChild("title") )
-
-    #if ( $pageTitle && $pageTitle.value != "" )
+    ## Grab page "display-name"
+    #set ( $pageTitle   = $page.getChild("title") )
+    #set ( $pageDisplay = $page.getChild("display-name") )
+    
+    ## Determine available metadata
+    #if ( $page.getChild("title") && $pageTitle.value != "" )
         #set ( $thePageTitle = $pageTitle )
+    #elseif ( $page.getChild("display-name") && $pageDisplay.value != "" )
+        #set ( $thePageTitle = $pageDisplay )
     #else
         #set ( $thePageTitle = $page.getChild("name") )
     #end
@@ -60,10 +26,15 @@
 ## Macro for displaying folder
 #macro ( showFolder $folder )
     ## Grab folder "title"
-    #set ( $folderTitle = $folder.getChild("title") )
-
-    #if ( $folderTitle && $folderTitle.value != "" )
+    ## Grab folder "display-name"
+    #set ( $folderTitle   = $folder.getChild("title") )
+    #set ( $folderDisplay = $folder.getChild("display-name") )
+    
+    ## Determine available metadata
+    #if ( $folder.getChild("title") && $folderTitle.value != "" )
         #set ( $theFolderTitle = $folderTitle )
+    #elseif ( $folder.getChild("display-name") && $folderDisplay.value != "" )
+        #set ( $theFolderTitle = $folderDisplay )
     #else
         #set ( $theFolderTitle = $folder.getChild("name") )
     #end
@@ -99,4 +70,45 @@
         #end
         </ul>
     #end
+#end
+
+
+
+
+
+## Reference the 'system-index-block' node
+#set ( $sib = $_XPathTool.selectSingleNode($contentRoot, "/system-index-block") )
+
+## Reference the 'user-information' node
+#set ( $userInfo = $_XPathTool.selectSingleNode($sib, "user-information") )
+
+## Reference the username
+## Reference the full name
+## What groups is the user in
+#set ( $username = $userInfo.getChild("username").value )
+#set ( $fullname = $userInfo.getChild("full-name").value )
+    #if ( $fullname != "" )
+        #set ( $userDisplayName = $fullname )
+    #else
+        #set ( $userDisplayName = $username )
+    #end
+#set ( $groups = $_XPathTool.selectNodes($userInfo, "groups/group") )
+#set ( $userGroups = "" )
+#foreach ( $group in $groups )
+    #set ( $userGroups = $userGroups + $group.value )
+    #if ( $foreach.hasNext )
+        #set ( $userGroups = $userGroups + "|" )
+    #end
+#end
+
+#set ( $accessType  = "write" )
+#set ( $accessCheck = "access-rights[group[contains('${userGroups}',name)][permission='${accessType}']]" )
+
+## Gather items (folders or pages)
+#set ( $items = $_XPathTool.selectNodes($sib, "system-folder[descendant::system-page[${accessCheck}]] | system-page[${accessCheck}]") )
+
+## Make the map
+#if ( $items.size() > 0 )
+    <h2>Content you (${userDisplayName}) can edit</h2>
+    #loopFolder($items)
 #end
