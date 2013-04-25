@@ -1,0 +1,13 @@
+#set ( $blocks = $_XPathTool.selectNodes($contentRoot, "//system-block[name='setup']") )
+
+#set ( $length = $blocks.size() )
+#if ( $blocks.size() > 0 )
+    #set ( $last = $length - 1 )
+    #set ( $data = $blocks[$last].getChild("system-data-structure") )
+    #set ( $header = $data.getChild("header") )
+    #if ( $header.getChild("path").value != "/" )
+        #set ( $name = $header.getChild("link").value )
+        #set ( $link = $header.getChild("link").value )
+        <img src="${link}" alt="${name}" />
+    #end
+#end
