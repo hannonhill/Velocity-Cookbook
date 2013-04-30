@@ -1,3 +1,4 @@
+## Some constants
 #set ( $defaultPage = "index" )
 #set ( $separator = "&#187;" )
 
@@ -8,11 +9,15 @@
 
 ## Define a loop
 #foreach ( $crumb in $trail )
+    ## Reference to the title node
     ## Reference to the display-name node
+    #set ( $folderTitle       = $_XPathTool.selectSingleNode($crumb, "title") )
     #set ( $folderDisplayName = $_XPathTool.selectSingleNode($crumb, "dynamic-metadata[name='breadcrumb']/value") )
     
-    #if ( $folderDisplayName && $folderDisplayName.value != "" )
+    #if ( $_XPathTool.selectSingleNode($crumb, "dynamic-metadata[name='breadcrumb']/value") && $folderDisplayName.value != "" )
         #set ( $theFolderTitle = $folderDisplayName )
+    #elseif ( $_XPathTool.selectSingleNode($crumb, "title") && $folderTitle.value != "" )
+        #set ( $theFolderTitle = $folderTitle )
     #else
         #set ( $theFolderTitle = $crumb.getChild("name") )
     #end
@@ -28,11 +33,15 @@
         #else
             <a href="${link}/${defaultPage}">$_EscapeTool.xml($theFolderTitle.value)</a> ${separator}
             
+            ## Reference to the title node
             ## Reference to the display-name node
+            #set ( $pageTitle       = $_XPathTool.selectSingleNode($page, "title") )
             #set ( $pageDisplayName = $_XPathTool.selectSingleNode($page, "dynamic-metadata[name='breadcrumb']/value") )
-            
-            #if ( $pageDisplayName && $pageDisplayName.value != "" )
+
+            #if ( $_XPathTool.selectSingleNode($page, "dynamic-metadata[name='breadcrumb']/value") && $pageDisplayName.value != "" )
                 #set ( $thePageTitle = $pageDisplayName )
+            #elseif ( $_XPathTool.selectSingleNode($page, "title") && $pageTitle.value != "" )
+                #set ( $thePageTitle = $pageTitle )
             #else
                 #set ( $thePageTitle = $page.getChild("name") )
             #end
