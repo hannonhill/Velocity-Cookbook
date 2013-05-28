@@ -1,163 +1,97 @@
 #set ( $widgetSDS = $_XPathTool.selectSingleNode($contentRoot, ".") )
+#set ( $output =  "#outputWidget($widgetSDS)" )
+$output.trim()
+#*
+    Outputs a Twitter Widget after injecting addtional client side options.
+    See https://dev.twitter.com/docs/embedded-timelines for additional information.
 
-## Basic Required Setup Information
-#set ( $wType = $widgetSDS.getChild('type').value.toLowerCase() )
-#set ( $wUsername = $widgetSDS.getChild('username') )
-#set ( $wQuery = $widgetSDS.getChild('query') )
+    @param  $widgetSDS the structure data for the widget
+*#
+#macro ( outputWidget $widgetSDS )
+    ## Required Setup Information
+    #set ( $wCode = $widgetSDS.getChild('code').value )
 
-## Check for required fields based on type of widget.
-#set ( $wValidWidgetSettings = false )
-#if ( ($wType == 'profile' || $wType == 'faves') && $wUsername && $wUsername.value != '' ) 
-    #set ( $wValidWidgetSettings = true )
-    
-   	## Using .java because the $wSetUserMethod string being built below uses double quotes.    
-    #set ( $wUsername = $_EscapeTool.java($wUsername.value) )
-#elseif( $wType == 'search' && $wQuery && $wQuery.value != '' )
-    #set ( $wValidWidgetSettings = true )
-    
-   	## Using .java because the string being built below for searching uses double quotes.        
-    #set ( $wQuery = $_EscapeTool.java($wQuery.value) )
-#end
+    ## Make sure we have the required information before proceeding to display the widget.
+    #if ( $wCode && $wCode != "")
+        ## References to the dimension, appearence and advanced appearence groups.
+        #set ( $wDimensionSDS = $widgetSDS.getChild('dimensions') )
+        #set ( $wAppearenceSDS = $widgetSDS.getChild('appearence') )
+        #set ( $wAdvAppearenceSDS = $wAppearenceSDS.getChild('advanced') )
 
-## Make sure we have the required information before proceeding to build widget.
-#if ( $wValidWidgetSettings == true )
-    ## The Rest of the Widget Setup Information
-    #set ( $wTitle = $widgetSDS.getChild('title').value)
-    #if ( $wTitle && $wTitle != '' )
-    	## Using .java because the string being built below uses double quotes.
-        #set ( $wTitle = $_EscapeTool.java($wTitle))
-    #else
-        #set ( $wTitle = '')
-    #end
-    
-    #set ( $wCaption = $widgetSDS.getChild('caption').value)
-    #if ( $wCaption && $wCaption != '' )
-    	## Using .java because the string being built below uses double quotes.    
-        #set ( $wCaption = $_EscapeTool.java($wCaption))
-    #else
-        #set ( $wCaption = '')
-    #end
-    
-    #set ( $wSetUserMethod = '' )
-    #set ( $wAdditionalParams = '' )
-    #if ( $wType == 'search' )
-        ## If we're dealing with a Search widget, the search params must be added to the 
-        ## options during initialization. See https://support.twitter.com/articles/71577 for
-        ## advanced search examples.
-        
-        #set ( $wAdditionalParams = "search: '${wQuery}'," )
-        #set ( $wAdditionalParams = $wAdditionalParams + "title: '${wTitle}'," )
-        #set ( $wAdditionalParams = $wAdditionalParams + "subject: '${wCaption}'," )
-    #elseif ( $wType == 'faves' )
-        ## If we're dealing with a Faves widget, the setUser() method must be called before
-        ## the widget start() method is called. Title and Subject are also applicable.
+        ## Map containing the client side settings.
+        #set ( $wSettings =  {} )
 
-        #set ( $wSetUserMethod = ".setUser('${wUsername}')" )
-        #set ( $wAdditionalParams = "title: '${wTitle}'," )
-        #set ( $wAdditionalParams = $wAdditionalParams + "subject: '${wCaption}'," )
-    #else
-        ## If we're dealing with a Profile widget, the setUser() method must be called before
-        ## the widget start() method is called.
+        ## Dimension Settings
+        #set ( $wWidth =  $wDimensionSDS.getChild("width").value )
+        #if ( $wWidth && $wWidth != "" )
+            #set ( $_void =  $wSettings.put("width", "'${wWidth}'") )
+        #end
 
-        #set ( $wSetUserMethod = ".setUser('${wUsername}')" )
-    #end
-    
-    ## Preferences
-    #set ( $wPreferences = $widgetSDS.getChild('preferences') )
-    #set ( $wPreferencesAdvanced = $wPreferences.getChild('advanced') )
-    
-    #if ( $wPreferences.getChild('live').value == 'Yes' )
-        #set ( $wLive = true )
-    #else 
-        #set ( $wLive = false )
-    #end
-    
-    #if ( $wPreferences.getChild('scrollbar').value == 'Yes' )
-        #set ( $wScrollbar = true )
-    #else 
-        #set ( $wScrollbar = false )
-    #end
-    
-    #if ( $wPreferences.getChild('behavior').value == 'Load all tweets' )
-        #set ( $wBehavior = 'all' )
-    #else 
-        #set ( $wBehavior = 'default' )
-    #end
-    
-    #if ( $wBehavior == 'default' && $wPreferences.getChild('loop').value == 'Yes' )
-        #set ( $wLoop = true )
-    #else 
-        #set ( $wLoop = false )
-    #end
-    
-    #set ( $wInterval = $wPreferences.getChild('interval').value )    
-    #set ( $wRpp = $wPreferences.getChild('rpp').value )
-    
-    #if ( $wPreferencesAdvanced.getChild('hashtags').value == 'Yes' )
-        #set ( $wHashtags = true )
-    #else 
-        #set ( $wHashtags = false )
-    #end
-    
-    #if ( $wPreferencesAdvanced.getChild('avatars').value == 'Yes' )
-        #set ( $wAvatars = true )
-    #else 
-        #set ( $wAvatars = false )
-    #end
-    
-    #if ( $wPreferencesAdvanced.getChild('fullscreen').value == 'Yes' )
-        #set ( $wFullscreen = true )
-    #else 
-        #set ( $wFullscreen = false )
-    #end
-    
-    ## Appearance
-    #set ( $wAppearance = $widgetSDS.getChild('appearance') )
-    #set ( $wShellBg = $_EscapeTool.javascript($wAppearance.getChild('shell-background').value) )
-    #set ( $wShellColor = $_EscapeTool.javascript($wAppearance.getChild('shell-text').value) )
-    #set ( $wTweetBg = $_EscapeTool.javascript($wAppearance.getChild('tweet-background').value) )
-    #set ( $wTweetColor = $_EscapeTool.javascript($wAppearance.getChild('tweet-text').value) )
-    #set ( $wLinkColor = $_EscapeTool.javascript($wAppearance.getChild('link-text').value) )
+        #set ( $wHeight =  $wDimensionSDS.getChild("height").value )
+        #if ( $wHeight && $wHeight != "" )
+            #set ( $_void =  $wSettings.put("height", "'${wHeight}'") )
+        #end
 
-    ## Widget Dimensions
-    #set ( $wDimensions = $widgetSDS.getChild('dimensions') )
-    #set ( $wHeight = $_EscapeTool.javascript($wDimensions.getChild('height').value) )
-    #set ( $wWidth = $_EscapeTool.javascript($wDimensions.getChild('width').value) )
-    #if ( $wDimensions.getChild('auto-width').value == 'Yes' )
-        #set ( $wWidth = "'auto'" )
+        ## Basic Appearence Settings
+        #set ( $wTweetLimit = $wAppearenceSDS.getChild("tweet-limit").value )
+        #if ( $wTweetLimit && $wTweetLimit != "" )
+            #set ( $_void =  $wSettings.put("data-tweet-limit", "'${wTweetLimit}'") )
+        #end
+
+        #set ( $wTheme = $wAppearenceSDS.getChild("theme").value )
+        #set ( $_void =  $wSettings.put("data-theme", "'${wTheme}'") )
+
+        ## Advanced color settings.
+        #set ( $wBorderColor = $wAdvAppearenceSDS.getChild("border-color").value )
+        #if ( $wBorderColor && $wBorderColor != "" )
+            #set ( $_void =  $wSettings.put("data-border-color", "'${wBorderColor}'") )
+        #end
+
+        #set ( $wLinkColor = $wAdvAppearenceSDS.getChild("link-color").value )
+        #if ( $wLinkColor && $wLinkColor != "" )
+            #set ( $_void =  $wSettings.put("data-link-color", "'${wLinkColor}'") )
+        #end
+
+        ## Advanced "chrome" settings.
+        #set ( $wChromeSettings = [] )
+
+        #set ( $wIncHeader = $wAdvAppearenceSDS.getChild("header").getChild("value") )
+        #if ( $wAdvAppearenceSDS.getChild("header").indexOf($wIncHeader) != -1 )
+            #set ( $_void =  $wChromeSettings.add("noheader") )
+        #end
+
+        #set ( $wIncFooter = $wAdvAppearenceSDS.getChild("footer").getChild("value") )
+        #if ( $wAdvAppearenceSDS.getChild("footer").indexOf($wIncFooter) != -1 )
+            #set ( $_void =  $wChromeSettings.add("nofooter") )
+        #end
+
+        #set ( $wIncBorders = $wAdvAppearenceSDS.getChild("borders").getChild("value") )
+        #if ( $wAdvAppearenceSDS.getChild("borders").indexOf($wIncBorders) != -1 )
+            #set ( $_void =  $wChromeSettings.add("noborders") )
+        #end
+
+        #set ( $wIncScrollbar = $wAdvAppearenceSDS.getChild("scrollbar").getChild("value") )
+        #if ( $wAdvAppearenceSDS.getChild("scrollbar").indexOf($wIncScrollbar) != -1 )
+            #set ( $_void =  $wChromeSettings.add("noscrollbar") )
+        #end
+
+        #set ( $wTransparent = $wAdvAppearenceSDS.getChild("transparent").getChild("value") )
+        #if ( $wAdvAppearenceSDS.getChild("transparent").indexOf($wTransparent) != -1 )
+            #set ( $_void =  $wChromeSettings.add("transparent") )
+        #end
+
+        ## Merge the chrome settings into the widget settings map.
+        #if ( $wChromeSettings.size() > 0 )
+            #set ( $wChromeSettings = $_DisplayTool.list($wChromeSettings, " ") )
+            #set ( $_void =  $wSettings.put("data-chrome", "'${wChromeSettings}'") )
+        #end
+
+        ## Convert the widget settings map to a string, remove the {} and ,
+        #set ( $wSettings = $wSettings.toString() )
+        #set ( $wSettings = $wSettings.substring(1, $_MathTool.sub($wSettings.length(),1)) )
+        #set ( $wSettings = $wSettings.replaceAll(", ", " ") )
+
+        ## Display the widget's code after injecting the custom settings.
+        $wCode.replace("<a", "<a ${wSettings}")
     #end
-    
-    ## Display the Widget if we have the 
-    <script type="text/javascript" charset="utf-8" src="http://widgets.twimg.com/j/2/widget.js"></script>
-    <script type="text/javascript">
-        new TWTR.Widget({
-            version: 2,
-            type: '${wType}',
-            rpp: $wRpp,
-            interval: ${wInterval}000,
-            $wAdditionalParams
-            width: $wWidth,
-            height: $wHeight,
-            theme: {
-                shell: {
-                    background: '${wShellBg}',
-                    color: '${wShellColor}'
-                },
-                tweets: {
-                    background: '${wTweetBg}',
-                    color: '${wTweetColor}',
-                    links: '${wLinkColor}'
-                }
-            },
-            features: {
-                scrollbar: $wScrollbar,
-                loop: $wLoop,
-                live: $wLive,
-                behavior: '${wBehavior}',
-                hashtags: $wHashtags,
-                avatars: $wAvatars,
-                fullscreen: $wFullscreen
-            }
-        }).render()${wSetUserMethod}.start();
-    </script>
 #end
