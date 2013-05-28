@@ -2,11 +2,11 @@ The combination of the Twitter Widget Data Definition and Velocity Format will p
 
 More information about Twitter Widgets (Embeddable Timelines) and the available options can be found [here][twitter-docs-embedded-timelines].
 
-twitter-widget-dd.xml
+[twitter-widget-dd.xml](https://github.com/hannonhill/Velocity-Cookbook/blob/master/Twitter-Widget/twitter-widget-dd.xml)
 ========
 * The Data Definition to be used for Twitter Widget Structured Data Blocks.
 
-twitter-widget.vm
+[twitter-widget.vm](https://github.com/hannonhill/Velocity-Cookbook/blob/master/Twitter-Widget/twitter-widget.vm)
 ========
 * Creates a Twitter Widget based on Structured Data from the Data Definition above.
 
