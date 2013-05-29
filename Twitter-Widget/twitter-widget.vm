@@ -39,7 +39,9 @@ $output.trim()
         #end
 
         #set ( $wTheme = $wAppearenceSDS.getChild("theme").value )
-        #set ( $_void =  $wSettings.put("data-theme", "'${wTheme}'") )
+        #if ( $wTheme != "Default" )
+            #set ( $_void =  $wSettings.put("data-theme", "'${wTheme}'") )
+        #end
 
         ## Advanced color settings.
         #set ( $wBorderColor = $wAdvAppearenceSDS.getChild("border-color").value )

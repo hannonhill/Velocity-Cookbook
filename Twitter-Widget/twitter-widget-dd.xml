@@ -6,7 +6,8 @@
   </group>
   <group identifier="appearence" label="Widget Appearence">
     <text identifier="tweet-limit" label="Tweet Limit" size="3" help-text="Fix the size of a timeline to a preset number of Tweets (between 1 and 20). The timeline will render the specified number of Tweets from the timeline, expanding the height of the widget to display all Tweets without scrolling. Since the widget is of a fixed size, it will not poll for updates when using this option."/>
-    <text type="dropdown" identifier="theme" label="Theme" default="light">
+    <text type="dropdown" identifier="theme" label="Theme" default="Default" help-text="Select a theme for the widget. 'Default' will inherit the value selected from within the Twitter widget settings.">
+      <dropdown-item value="Default"/>
       <dropdown-item value="light"/>
       <dropdown-item value="dark"/>
     </text>
