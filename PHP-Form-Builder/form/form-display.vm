@@ -214,7 +214,7 @@
 
       // If Excel option was chosen, upload Excel file to CMS
       if ($excelFile) {
-        $path = "/results/dummy.txt";
+        $path = "${callingPageData.getChild('system-data-structure').getChild('resultsFile').getChild('formPath').getChild('path').text}";
         if (($path != "") AND ($path != "/")) {
           $folder = getParentFolderOutOfPath($path);
           $csvFileName = $fname . ".csv";
