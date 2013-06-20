@@ -1,5 +1,4 @@
 #set ( $defaultPage = "index" )
-#set ( $separator = "&#187;" )
 
 ## Gather items for breadcrumb
 #set ( $trail = $_XPathTool.selectNodes($contentRoot, "//system-folder") )
