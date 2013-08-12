@@ -299,7 +299,7 @@
 [/system-view:external]
 #set ( $callingPageStructure = $_XPathTool.selectSingleNode($callingPageData, "system-data-structure") )
 <form action="[system-asset]${callingPageStructure.getChild('action').getChild('path').text}[/system-asset]?submitted=true" method="POST">
-  <p>${callingPageStructure.getChild('opening').text}</p>
+  ${_SerializerTool.serialize($callingPageStructure.getChild('opening'), true)}
 
   <table cellpadding="2" summary="FOR LAYOUT ONLY" width="100%">
   #set ( $formItems = $_XPathTool.selectNodes($callingPageStructure, "form_item") )
