@@ -2,7 +2,7 @@
 
 * Velocity Format applied to a Page using youtube-feed-dd.xml Data Definition in part or whole.
 * Feed must be RSS 2.0 with <item> nodes for each feed item.
-* Includes Lightbox 2.0 effect for photos. Currently all videos will be in the same "album" during effect.
+* Includes Lightbox 2.0 effect for videos. Currently all videos will be in the same "album" during effect.
 
 **youtube-feed-dd.xml**
 
