@@ -1,0 +1,59 @@
+<system-data-structure>
+    <group identifier="feed" label="Feed Block">
+        <asset type="block" identifier="feed" label="YouTube Feed Block" render-content-depth="2"/>
+        <text type="dropdown" identifier="dimensions" label="Video dimensions" default="480x270">
+            <dropdown-item value="240x135"/>
+            <dropdown-item value="320x180"/>
+            <dropdown-item value="400x225"/>
+            <dropdown-item value="480x270"/>
+            <dropdown-item value="560×315"/>
+            <dropdown-item value="640x360"/>
+        </text>
+        <text type="dropdown" identifier="total" label="Total Videos to Show" default="20"
+            help-text="YouTube feeds pull a maximum of 25 videos.">
+            <dropdown-item value="1"/>
+            <dropdown-item value="2"/>
+            <dropdown-item value="3"/>
+            <dropdown-item value="4"/>
+            <dropdown-item value="5"/>
+            <dropdown-item value="6"/>
+            <dropdown-item value="7"/>
+            <dropdown-item value="8"/>
+            <dropdown-item value="9"/>
+            <dropdown-item value="10"/>
+            <dropdown-item value="11"/>
+            <dropdown-item value="12"/>
+            <dropdown-item value="13"/>
+            <dropdown-item value="14"/>
+            <dropdown-item value="15"/>
+            <dropdown-item value="16"/>
+            <dropdown-item value="17"/>
+            <dropdown-item value="18"/>
+            <dropdown-item value="19"/>
+            <dropdown-item value="20"/>
+            <dropdown-item value="21"/>
+            <dropdown-item value="22"/>
+            <dropdown-item value="23"/>
+            <dropdown-item value="24"/>
+            <dropdown-item value="25"/>
+        </text>
+    </group>
+    <group identifier="structure" label="Structured Field" collapsed="true">
+        <text identifier="url" label="Video URL"
+            help-text="Example: http://www.youtube.com/watch?v=9bZkp7q19f0"/>
+        <text type="dropdown" identifier="size" label="Video size" default="480x270">
+            <dropdown-item value="240x135"/>
+            <dropdown-item value="320x180"/>
+            <dropdown-item value="400x225"/>
+            <dropdown-item value="480x270"/>
+            <dropdown-item value="560×315"/>
+            <dropdown-item value="640x360"/>
+            <dropdown-item value="853x480"/>
+        </text>
+        <text multi-line="true" identifier="caption" label="Video Caption"/>
+    </group>
+    <group identifier="wysiwyg" label="WYSIWYG" collapsed="true">
+        <text wysiwyg="true" identifier="content" label="Content"
+            help-text="Use the Insert Media toolbar button."/>
+    </group>
+</system-data-structure>

@@ -1,0 +1,49 @@
+#set ( $page = $_XPathTool.selectSingleNode($contentRoot, "/system-index-block/calling-page/system-page") )
+#set ( $data = $page.getChild("system-data-structure") )
+
+#set ( $feed      = $data.getChild("feed") )
+#set ( $structure = $data.getChild("structure") )
+#set ( $wysiwyg   = $data.getChild("wysiwyg") )
+
+<div id="videos">
+
+## Feed 
+#set ( $items = $_XPathTool.selectNodes($feed, "feed/content/rss/channel/item") )
+#if ( $items.size() > 0 )
+    #set ( $dimensions = $feed.getChild("dimensions").value )
+    #set ( $width = $_StringTool.substringBefore($dimensions, "x") )
+    #set ( $height = $_StringTool.substringAfter($dimensions, "x") )
+    
+    #set ( $total = $feed.getChild("total").value )
+    
+    #foreach ( $item in $items )
+        #set ( $guid = $_StringTool.substringAfter($item.getChild("guid").value, "/videos/") )
+        <iframe width="${width}" height="${height}" src="http://www.youtube.com/embed/${guid}" frameborder="0"></iframe>
+        #if ( $foreach.count == $total )
+            #break
+        #end
+    #end
+## Structured Field
+#elseif ( $structure.getChild("url").value != "" )
+    #set ( $url = $_EscapeTool.xml($structure.getChild("url").value) )
+    #set ( $query = $_StringTool.substringAfter($url, "v=") )
+    #if ( $query.indexOf('&') != -1 )
+        #set ( $guid = $_StringTool.substringBefore($query, "&") )
+    #else
+        #set ( $guid = $query )
+    #end
+    
+    #set ( $size = $structure.getChild("size").value )
+    #set ( $width = $_StringTool.substringBefore($size, "x") )
+    #set ( $height = $_StringTool.substringAfter($size, "x") )
+    
+    #set ( $caption = $structure.getChild("caption") )
+    
+    <iframe width="${width}" height="${height}" src="http://www.youtube.com/embed/${guid}" frameborder="0"></iframe>
+    <p>$_EscapeTool.xml($caption.value)</p>
+## WYSIWYG
+#else
+    $_SerializerTool.serialize($wysiwyg, true)
+#end
+
+</div>
