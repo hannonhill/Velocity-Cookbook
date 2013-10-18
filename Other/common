@@ -1,0 +1,31 @@
+## Common variables, references, macros, etc that can be reused via import.
+
+#set ( $sib  = $_XPathTool.selectSingleNode($contentRoot, "/system-index-block") )
+#set ( $page = $_XPathTool.selectSingleNode($sib, "calling-page/system-page") )
+#set ( $data = $page.getChild("system-data-structure") )
+
+#set ( $display     = $page.getChild("display") )
+#set ( $title       = $page.getChild("title") )
+#set ( $summary     = $page.getChild("summary") )
+#set ( $teaser      = $page.getChild("teaser") )
+#set ( $keywords    = $page.getChild("keywords") )
+#set ( $description = $page.getChild("description") )
+#set ( $author      = $page.getChild("author") )
+#set ( $start       = $page.getChild("start-date") )
+#set ( $end         = $page.getChild("end-date") )
+
+#set ( $_display     = $_EscapeTool.xml($display.value) )
+#set ( $_title       = $_EscapeTool.xml($title.value) )
+#set ( $_summary     = $_EscapeTool.xml($summary.value) )
+#set ( $_teaser      = $_EscapeTool.xml($teaser.value) )
+#set ( $_keywords    = $_EscapeTool.xml($keywords.value) )
+#set ( $_description = $_EscapeTool.xml($description.value) )
+#set ( $_author      = $_EscapeTool.xml($author.value) )
+
+#macro ( showDate $dateValue $formatString )
+    #set ( $dateObject = $_DateTool.getDate($dateValue) )
+    #set ( $dateString = $_DateTool.format($formatString, $dateObject) )
+    ${dateString}
+#end
+
+#set ( $content = $data.getChild("content") )
