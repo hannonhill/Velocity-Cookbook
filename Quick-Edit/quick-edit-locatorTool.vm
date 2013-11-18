@@ -1,0 +1,10 @@
+## System URL without a trailing slash
+#set ( $url = "http://localhost:8080" )
+## Edit or open
+#set ( $action = "edit" )
+
+## Get the formatted 'last-modified' date
+#set ( $page = $_.locatePage($currentPagePath, $currentPageSiteName) )
+#set ( $date = $_DateTool.format("MM/dd/yyyy", $page.lastModified) )
+
+Last updated: <a href="${url}/entity/${action}.act?type=page&amp;id=${id}#highlight">${date}</a>
