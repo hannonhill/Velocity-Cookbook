@@ -27,7 +27,11 @@
 #set ( $_author      = $_EscapeTool.xml($author.value) )
 
 #macro ( showDate $dateValue $formatString )
-    #set ( $dateObject = $_DateTool.getDate($dateValue) )
+    #if ( $dateValue != "" )
+        #set ( $dateObject = $_DateTool.getDate($dateValue) )
+    #else
+        #set ( $dateObject = $_DateTool.getDate() )
+    #end
     #set ( $dateString = $_DateTool.format($formatString, $dateObject) )
     ${dateString}
 #end
