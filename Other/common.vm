@@ -1,7 +1,7 @@
 ## Common variables, references, macros, etc that can be reused via import.
 
-#set ( $url    = "http://sandbox.cascadeserver.com" )
-#set ( $domain = "http://www.cascade-test.com" )
+#set ( $url    = "http://cascade.example.edu" )
+#set ( $domain = "http://www.example.edu" )
 #set ( $ext    = ".html" )
 
 #set ( $sib  = $_XPathTool.selectSingleNode($contentRoot, "/system-index-block") )
@@ -46,9 +46,6 @@
     #set ( $dateString = $_DateTool.format($formatString, $dateObject) )
     ${dateString}
 #end
-
-#set($articleDate = $article.getChild("start-date").value)
-
 
 #set ( $content  = $data.getChild("content") )
 #set ( $_content = $_SerializerTool.serialize($content, true) )
