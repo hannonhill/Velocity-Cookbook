@@ -36,4 +36,5 @@
     ${dateString}
 #end
 
-#set ( $content = $data.getChild("content") )
+#set ( $content  = $data.getChild("content") )
+#set ( $_content = $_SerializerTool.serialize($content, true) )
