@@ -1,42 +1,5 @@
 ## Common variables, references, macros, etc that can be reused via import.
 
-#set ( $url    = "http://example.cascadeserver.edu" )
-#set ( $domain = "http://www.example.edu" )
-#set ( $ext    = ".html" )
-
-#set ( $sib  = $_XPathTool.selectSingleNode($contentRoot, "/system-index-block") )
-#set ( $page = $_XPathTool.selectSingleNode($sib, "calling-page/system-page") )
-#set ( $data = $page.getChild("system-data-structure") )
-
-#set ( $display     = $page.getChild("display") )
-#set ( $title       = $page.getChild("title") )
-#set ( $summary     = $page.getChild("summary") )
-#set ( $teaser      = $page.getChild("teaser") )
-#set ( $keywords    = $page.getChild("keywords") )
-#set ( $description = $page.getChild("description") )
-#set ( $author      = $page.getChild("author") )
-#set ( $start       = $page.getChild("start-date") )
-#set ( $end         = $page.getChild("end-date") )
-
-#set ( $_display     = $_EscapeTool.xml($display.value) )
-#set ( $_title       = $_EscapeTool.xml($title.value) )
-#set ( $_summary     = $_EscapeTool.xml($summary.value) )
-#set ( $_teaser      = $_EscapeTool.xml($teaser.value) )
-#set ( $_keywords    = $_EscapeTool.xml($keywords.value) )
-#set ( $_description = $_EscapeTool.xml($description.value) )
-#set ( $_author      = $_EscapeTool.xml($author.value) )
-
-#macro ( showDate $dateValue $formatString )
-    #if ( $dateValue != "" )
-        #set ( $dateObject = $_DateTool.getDate($dateValue) )
-    #else
-        #set ( $dateObject = $_DateTool.getDate() )
-    #end
-    #set ( $dateString = $_DateTool.format($formatString, $dateObject) )
-    ${dateString}
-#end
-## Common variables, references, macros, etc that can be reused via import.
-
 #set ( $url    = "http://sandbox.cascadeserver.com" )
 #set ( $domain = "http://www.cascade-test.com" )
 #set ( $ext    = ".html" )
@@ -86,9 +49,6 @@
 
 #set($articleDate = $article.getChild("start-date").value)
 
-
-#set ( $content  = $data.getChild("content") )
-#set ( $_content = $_SerializerTool.serialize($content, true) )
 
 #set ( $content  = $data.getChild("content") )
 #set ( $_content = $_SerializerTool.serialize($content, true) )
