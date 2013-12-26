@@ -1,8 +1,9 @@
 ## Common variables, references, macros, etc that can be reused via import.
 
-#set ( $url    = "http://cascade.example.edu" )
-#set ( $domain = "http://www.example.edu" )
-#set ( $ext    = ".html" )
+#set ( $url     = "http://cascade.example.edu" )
+#set ( $domain  = "http://www.example.edu" )
+#set ( $ext     = ".html" )
+#set ( $default = "index" )
 
 #set ( $sib  = $_XPathTool.selectSingleNode($contentRoot, "/system-index-block") )
 #set ( $page = $_XPathTool.selectSingleNode($sib, "calling-page/system-page") )
