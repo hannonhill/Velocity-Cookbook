@@ -47,5 +47,28 @@
     ${dateString}
 #end
 
+#macro ( dynamicMetadata $name )
+    #set ( $dm = $_XPathTool.selectSingleNode($page, "dynamic-metadata[name='${name}']/value") )
+#end
+#macro ( _dynamicMetadata $name )
+    #dynamicMetadata($name)
+    $_EscapeTool.xml($dm.value)
+#end
+
+#macro ( dynamicMetadataValues $name )
+    #set ( $dm = $_XPathTool.selectNodes($page, "dynamic-metadata[name='${name}']/value") )
+#end
+#macro ( _dynamicMetadataValues $name )
+    #dynamicMetadataValues($name)
+    #set ( $list = "" )
+    #foreach ( $d in $dm )
+        #set ( $list = $list + $_EscapeTool.xml($d.value) )
+        #if ( $foreach.hasNext )
+            #set ( $list = $list + ", " )
+        #end
+    #end
+    ${list}
+#end
+
 #set ( $content  = $data.getChild("content") )
 #set ( $_content = $_SerializerTool.serialize($content, true) )
