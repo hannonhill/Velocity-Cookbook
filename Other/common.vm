@@ -43,6 +43,8 @@ ${dateString}
 #set ( $dateObject = $_DateTool.toDate("MMM d, yyyy h:mm a", $dateValue) )
 #elseif ( $dateType == "picker" )
 #set ( $dateObject = $_DateTool.toDate("mm-dd-yyyy", $dateValue) )
+#elseif ( $dateType == "locator" )
+#set ( $dateObject = $_DateTool.toDate("EEE MMM dd HH:mm:ss zzz yyyy", $dateValue) )
 #else
 ## Format not captured.
 #end
