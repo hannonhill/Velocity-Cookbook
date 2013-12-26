@@ -27,25 +27,27 @@
 #set ( $_description = $_EscapeTool.xml($description.value) )
 #set ( $_author      = $_EscapeTool.xml($author.value) )
 
+## The whitespace is removed because the whitespace is captured
+## when using these for an RSS feed.
 #macro ( showDate $dateValue $formatString )
-    #if ( $dateValue != "" )
-        #set ( $dateObject = $_DateTool.getDate($dateValue) )
-    #else
-        #set ( $dateObject = $_DateTool.getDate() )
-    #end
-    #set ( $dateString = $_DateTool.format($formatString, $dateObject) )
-    ${dateString}
+#if ( $dateValue != "" )
+#set ( $dateObject = $_DateTool.getDate($dateValue) )
+#else
+#set ( $dateObject = $_DateTool.getDate() )
+#end
+#set ( $dateString = $_DateTool.format($formatString, $dateObject) )
+${dateString}
 #end
 #macro ( convertDate $dateType $dateValue $formatString )
-    #if ( $dateType == "chooser" )
-        #set ( $dateObject = $_DateTool.toDate("MMM d, yyyy h:mm a", $dateValue) )
-    #elseif ( $dateType == "picker" )
-        #set ( $dateObject = $_DateTool.toDate("mm-dd-yyyy", $dateValue) )
-    #else
-        ## Format not captured.
-    #end
-    #set ( $dateString = $_DateTool.format($formatString, $dateObject) )
-    ${dateString}
+#if ( $dateType == "chooser" )
+#set ( $dateObject = $_DateTool.toDate("MMM d, yyyy h:mm a", $dateValue) )
+#elseif ( $dateType == "picker" )
+#set ( $dateObject = $_DateTool.toDate("mm-dd-yyyy", $dateValue) )
+#else
+## Format not captured.
+#end
+#set ( $dateString = $_DateTool.format($formatString, $dateObject) )
+${dateString}
 #end
 
 #macro ( dynamicMetadata $name )
