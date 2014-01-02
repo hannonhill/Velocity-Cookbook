@@ -1,31 +1,32 @@
 ## Common variables, references, macros, etc that can be reused via import.
 
-#set ( $url     = "http://cascade.example.edu" )
-#set ( $domain  = "http://www.example.edu" )
+#set ( $url     = "http://cascadeserver.example.edu" ) ## Cascade Server login URL
+#set ( $domain  = "http://www.example.edu" )           ## Public website domain
 #set ( $ext     = ".html" )
 #set ( $default = "index" )
 
-#set ( $sib  = $_XPathTool.selectSingleNode($contentRoot, "/system-index-block") )
-#set ( $page = $_XPathTool.selectSingleNode($sib, "calling-page/system-page") )
-#set ( $data = $page.getChild("system-data-structure") )
+#set ( $currentPage = $_.locatePage($currentPagePath, $currentPageSiteName) )
 
-#set ( $display     = $page.getChild("display") )
-#set ( $title       = $page.getChild("title") )
-#set ( $summary     = $page.getChild("summary") )
-#set ( $teaser      = $page.getChild("teaser") )
-#set ( $keywords    = $page.getChild("keywords") )
-#set ( $description = $page.getChild("description") )
-#set ( $author      = $page.getChild("author") )
-#set ( $start       = $page.getChild("start-date") )
-#set ( $end         = $page.getChild("end-date") )
+#set ( $display     = $currentPage.metadata.displayName )
+#set ( $title       = $currentPage.metadata.title )
+#set ( $summary     = $currentPage.metadata.summary )
+#set ( $teaser      = $currentPage.metadata.teaser )
+#set ( $keywords    = $currentPage.metadata.keywords )
+#set ( $description = $currentPage.metadata.description )
+#set ( $author      = $currentPage.metadata.author )
+#set ( $start       = $currentPage.metadata.startDate )
+#set ( $end         = $currentPage.metadata.endDate )
 
-#set ( $_display     = $_EscapeTool.xml($display.value) )
-#set ( $_title       = $_EscapeTool.xml($title.value) )
-#set ( $_summary     = $_EscapeTool.xml($summary.value) )
-#set ( $_teaser      = $_EscapeTool.xml($teaser.value) )
-#set ( $_keywords    = $_EscapeTool.xml($keywords.value) )
-#set ( $_description = $_EscapeTool.xml($description.value) )
-#set ( $_author      = $_EscapeTool.xml($author.value) )
+#set ( $_display     = $_EscapeTool.xml($display.textValue) )
+#set ( $_title       = $_EscapeTool.xml($title.textValue) )
+#set ( $_summary     = $_EscapeTool.xml($summary.textValue) )
+#set ( $_teaser      = $_EscapeTool.xml($teaser.textValue) )
+#set ( $_keywords    = $_EscapeTool.xml($keywords.textValue) )
+#set ( $_description = $_EscapeTool.xml($description.textValue) )
+#set ( $_author      = $_EscapeTool.xml($author.textValue) )
+
+#set ( $content  = $currentPage.getStructuredDataNode("content") )
+#set ( $_content = $_SerializerTool.serialize($content.textValue, true) )
 
 ## The whitespace is removed because the whitespace is captured
 ## when using these for an RSS feed.
@@ -44,7 +45,7 @@ ${dateString}
 #elseif ( $dateType == "picker" )
 #set ( $dateObject = $_DateTool.toDate("mm-dd-yyyy", $dateValue) )
 #elseif ( $dateType == "locator" )
-#set ( $dateObject = $_DateTool.toDate("EEE MMM dd HH:mm:ss zzz yyyy", $dateValue) )
+#set ( $dateObject = $dateValue )
 #else
 ## Format not captured.
 #end
@@ -74,6 +75,3 @@ ${dateString}
     #end
     ${list}
 #end
-
-#set ( $content  = $data.getChild("content") )
-#set ( $_content = $_SerializerTool.serialize($content, true) )
