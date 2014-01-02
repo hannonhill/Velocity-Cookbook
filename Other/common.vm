@@ -25,8 +25,7 @@
 #set ( $_description = $_EscapeTool.xml($description) )
 #set ( $_author      = $_EscapeTool.xml($author) )
 
-#set ( $content  = $currentPage.getStructuredDataNode("content") )
-#set ( $_content = $_SerializerTool.serialize($content.textValue, true) )
+#set ( $content  = $currentPage.getStructuredDataNode("content").textValue )
 
 ## The whitespace is removed because the whitespace is captured
 ## when using these for an RSS feed.
@@ -54,24 +53,17 @@ ${dateString}
 #end
 
 #macro ( dynamicMetadata $name )
-    #set ( $dm = $_XPathTool.selectSingleNode($page, "dynamic-metadata[name='${name}']/value") )
+    #set ( $dm = $currentPage.metadata.getDynamicField($name).value )
+    
 #end
 #macro ( _dynamicMetadata $name )
     #dynamicMetadata($name)
-    $_EscapeTool.xml($dm.value)
+    $_EscapeTool.xml($dm)
 #end
 
 #macro ( dynamicMetadataValues $name )
-    #set ( $dm = $_XPathTool.selectNodes($page, "dynamic-metadata[name='${name}']/value") )
+    #set ( $dms = $currentPage.metadata.getDynamicField($name).values )
 #end
-#macro ( _dynamicMetadataValues $name )
-    #dynamicMetadataValues($name)
-    #set ( $list = "" )
-    #foreach ( $d in $dm )
-        #set ( $list = $list + $_EscapeTool.xml($d.value) )
-        #if ( $foreach.hasNext )
-            #set ( $list = $list + ", " )
-        #end
-    #end
-    ${list}
+#macro ( _dynamicMetadataValues $name $delim )
+    $_EscapeTool.xml($_DisplayTool.list($currentPage.metadata.getDynamicField($name).values, $delim))
 #end
