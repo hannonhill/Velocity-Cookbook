@@ -1,36 +1,56 @@
-#set ( $rssDateFormat = "EEE, dd MMM yyyy HH:mm:ss z" )
-#set ( $baseUrl = "http://www.example.edu" )
-#set ( $pageExtension = ".html" )
+## Root domain where feed is hosted
+#set ( $domain = "http://www.example.edu" )
+## Page extension
+#set ( $extension = ".html" )
+## RSS date format
+#set ( $format = "EEE, dd MMM yyyy HH:mm:ss zzz" )
+## Helper for filtering out base assets
+#set ( $base = "base-asset" )
+
+#set ( $items = $_XPathTool.selectNodes($contentRoot, "/system-index-block/system-page[not(contains(path,'${base}'))]") )
+
+$_SortTool.addSortCriterion("start-date", "en", "number", "descending", "upper-first")
+$_SortTool.sort($items)
+
+<rss version="2.0">
+<channel>
+    #set ( $pub = "#showDate('', $format)" )
+    <title>News Site</title>
+    <link>${domain}</link>
+    <description>The latest news for the site.</description>
+    <language>en-us</language>
+    <pubDate>${pub.trim()}</pubDate>
+    <generator>Cascade Server</generator>
+    <webMaster>webmaster@example.edu (Webmaster)</webMaster>
+    #foreach ( $item in $items )
+        #set ( $output = "#outputItem($item)" )
+        $output.trim()
+    #end
+</channel>
+</rss>
 
 #macro ( outputItem $item )
-  ## Record the basic information.
-  #set ( $pubDate = $_DateTool.getDate($item.getChild("last-modified").value).getTime() )
-  #set ( $path = $item.getChild("path") )
-  #set ( $title = $item.getChild("title") )
-  #set ( $summary = $item.getChild("summary") )
+    #set ( $path    = $item.getChild("path").value )
+    #set ( $start   = $item.getChild("start-date").value )
+    #set ( $date    = "#showDate($last, $format)" )
+    #set ( $title   = $item.getChild("title") )
+    #set ( $summary = $item.getChild("summary") )
+    #set ( $url     = "${domain}${path}${extension}" )
+    <item>
+        <title>$_EscapeTool.xml($title.value)</title>
+        <link>${url}</link>
+        <description>$_EscapeTool.xml($summary.value)</description>
+        <pubDate>${date.trim()}</pubDate>
+        <guid>${url}</guid>
+    </item>
+ #end
 
-  <item>
-    <title>${_EscapeTool.xml($title.value)}</title>
-    <link>${baseUrl}${path.value}${pageExtension}</link>
-    <pubDate>${_DateTool.format($rssDateFormat, $pubDate)}</pubDate>
-    <description>${_EscapeTool.xml($summary.value)}</description>
-  </item>
+#macro ( showDate $dateValue $formatString )
+#if ( $dateValue != "" )
+#set ( $dateObject = $_DateTool.getDate($dateValue) )
+#else
+#set ( $dateObject = $_DateTool.getDate() )
 #end
-
-
-#set ( $currentTime = $_XPathTool.selectSingleNode($contentRoot, "/system-index-block/@current-time").value )
-#set ( $currentPage = $_XPathTool.selectSingleNode($contentRoot, "//calling-page/system-page") )
-#set ( $items = $_XPathTool.selectNodes($contentRoot, "//system-page[not(@current)]") )
-<rss version="2.0"><channel>
-  <title>${_EscapeTool.xml($currentPage.getChild("title").value)}</title>
-  <link>${baseUrl}${currentPage.getChild("path").value}${pageExtension}</link>
-  <pubDate>${_DateTool.format($rssDateFormat, $_DateTool.getDate($currentTime))}</pubDate>
-#if ($items.size() > 0)
-  $_SortTool.addSortCriterion("last-modified", "", "number", "ascending", "upper-first")
-  $_SortTool.sort($items)
-  #foreach ($item in $items)
-    #set ( $output = "#outputItem($item)" )
-    $output.trim()
-  #end
+#set ( $dateString = $_DateTool.format($formatString, $dateObject) )
+${dateString}
 #end
-</channel></rss>
