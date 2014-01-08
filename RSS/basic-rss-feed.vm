@@ -31,7 +31,7 @@ $_SortTool.sort($items)
 
 #macro ( outputItem $item )
     #set ( $path    = $item.getChild("path").value )
-    #set ( $last    = $item.getChild("last-modified").value )
+    #set ( $start   = $item.getChild("start-date").value )
     #set ( $date    = "#showDate($last, $format)" )
     #set ( $title   = $item.getChild("title") )
     #set ( $summary = $item.getChild("summary") )
