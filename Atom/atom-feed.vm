@@ -10,6 +10,7 @@
 #set ( $tag = "tag:www.example.edu,2013-12-01:" )
 
 #set ( $entries = $_XPathTool.selectNodes($contentRoot, "/system-index-block/system-page[start-date][not(contains(path,'${base}'))]") )
+
 $_SortTool.addSortCriterion("start-date", "en", "number", "descending", "upper-first")
 $_SortTool.sort($entries)
 
