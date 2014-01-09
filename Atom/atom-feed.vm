@@ -1,0 +1,54 @@
+## Root domain where feed is hosted
+#set ( $domain = "http://www.example.edu" )
+## Page extension
+#set ( $extension = ".html" )
+## RSS date format
+#set ( $format = "yyyy-MM-dd'T'HH:mm:ss'Z'" )
+## Helper for filtering out base assets
+#set ( $base = "base-asset" )
+## Tag base
+#set ( $tag = "tag:www.example.edu,2013-12-01:" )
+
+#set ( $entries = $_XPathTool.selectNodes($contentRoot, "/system-index-block/system-page[start-date][not(contains(path,'${base}'))]") )
+$_SortTool.addSortCriterion("start-date", "en", "number", "descending", "upper-first")
+$_SortTool.sort($entries)
+
+<feed xmlns="http://www.w3.org/2005/Atom">
+     <title>Example Feed</title>
+     <link href="${domain}"/>
+     <updated>#showDate("", ${format})</updated>
+     <author>
+       <name>Cascade Server</name>
+     </author>
+     <id>${tag}x</id>
+    #foreach ( $entry in $entries )
+        #set ( $output = "#outputEntry($entry)" )
+        $output.trim()
+    #end
+</feed>
+
+#macro ( outputEntry $entry )
+    #set ( $id      = $entry.getAttribute("id").value )
+    #set ( $path    = $entry.getChild("path").value )
+    #set ( $start   = $entry.getChild("start-date").value )
+    #set ( $date    = "#showDate($start, $format)" )
+    #set ( $title   = $entry.getChild("title") )
+    #set ( $summary = $entry.getChild("summary") )
+    <entry>
+        <title>$_EscapeTool.xml($title.value)</title>
+        <link href="${domain}${path}${extension}"/>
+        <id>${tag}${id}</id>
+        <updated>${date.trim()}</updated>
+        <summary>$_EscapeTool.xml($summary.value)</summary>
+    </entry>
+ #end
+
+#macro ( showDate $dateValue $formatString )
+#if ( $dateValue != "" )
+#set ( $dateObject = $_DateTool.getDate($dateValue) )
+#else
+#set ( $dateObject = $_DateTool.getDate() )
+#end
+#set ( $dateString = $_DateTool.format($formatString, $dateObject) )
+${dateString}
+#end
