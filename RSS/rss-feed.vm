@@ -7,7 +7,7 @@
 ## Helper for filtering out base assets
 #set ( $base = "base-asset" )
 
-#set ( $items = $_XPathTool.selectNodes($contentRoot, "/system-index-block/system-page[not(contains(path,'${base}'))]") )
+#set ( $items = $_XPathTool.selectNodes($contentRoot, "/system-index-block/system-page[start-date][not(contains(path,'${base}'))]") )
 
 $_SortTool.addSortCriterion("start-date", "en", "number", "descending", "upper-first")
 $_SortTool.sort($items)
