@@ -1,12 +1,15 @@
 ## Common variables, references, macros, etc that can be reused via import.
 
-#set ( $url     = "http://cascadeserver.example.edu" ) ## Cascade Server login URL
-#set ( $domain  = "http://www.example.edu" )           ## Public website domain
-#set ( $ext     = ".html" )
-#set ( $default = "index" )
+## Global variables.
+#set ( $cascadeLogin = "http://cascade.example.edu" )
+#set ( $websiteURL   = "http://www.example.edu" )
+#set ( $extension    = ".html" )
+#set ( $defaultPage  = "index" )
 
+## Locator Tool.
 #set ( $currentPage = $_.locatePage($currentPagePath, $currentPageSiteName) )
 
+## Working with wired metadata.
 #set ( $display     = $currentPage.metadata.displayName )
 #set ( $title       = $currentPage.metadata.title )
 #set ( $summary     = $currentPage.metadata.summary )
@@ -25,10 +28,11 @@
 #set ( $_description = $_EscapeTool.xml($description) )
 #set ( $_author      = $_EscapeTool.xml($author) )
 
+## Common Data Definition WYSIWYG.
 #set ( $content  = $currentPage.getStructuredDataNode("content").textValue )
 
-## The whitespace is removed because the whitespace is captured
-## when using these for an RSS feed.
+## Working with dates.
+## The whitespace is removed to help form RSS/Atom feed.
 #macro ( showDate $dateValue $formatString )
 #if ( $dateValue != "" )
 #set ( $dateObject = $_DateTool.getDate($dateValue) )
@@ -46,24 +50,22 @@ ${dateString}
 #elseif ( $dateType == "locator" )
 #set ( $dateObject = $dateValue )
 #else
-## Format not captured.
+## Format not captured. Additional formats can be added here.
 #end
 #set ( $dateString = $_DateTool.format($formatString, $dateObject) )
 ${dateString}
 #end
 
-#macro ( dynamicMetadata $name )
-    #set ( $dm = $currentPage.metadata.getDynamicField($name).value )
-    
+## Working with dynamic metadata.
+#macro ( dmv $name )
+    $currentPage.metadata.getDynamicField($name).value
 #end
-#macro ( _dynamicMetadata $name )
-    #dynamicMetadata($name)
-    $_EscapeTool.xml($dm)
+#macro ( _dmv $name )
+    $_EscapeTool.xml(#dmv($name))
 #end
-
-#macro ( dynamicMetadataValues $name )
-    #set ( $dms = $currentPage.metadata.getDynamicField($name).values )
+#macro ( dmvs $name )
+    $currentPage.metadata.getDynamicField($name).values
 #end
-#macro ( _dynamicMetadataValues $name $delim )
-    $_EscapeTool.xml($_DisplayTool.list($currentPage.metadata.getDynamicField($name).values, $delim))
+#macro ( _dmvs $name $delim )
+    $_EscapeTool.xml($_DisplayTool.list(#dmvs($name), $delim))
 #end
