@@ -58,14 +58,16 @@ ${dateString}
 
 ## Working with dynamic metadata.
 #macro ( dmv $name )
-    $currentPage.metadata.getDynamicField($name).value
+    ${currentPage.metadata.getDynamicField($name).value}
 #end
 #macro ( _dmv $name )
-    $_EscapeTool.xml(#dmv($name))
+    #set ( $dmv = $currentPage.metadata.getDynamicField($name).value )
+    $_EscapeTool.xml($dmv)
 #end
 #macro ( dmvs $name )
-    $currentPage.metadata.getDynamicField($name).values
+    ${currentPage.metadata.getDynamicField($name).values}
 #end
 #macro ( _dmvs $name $delim )
-    $_EscapeTool.xml($_DisplayTool.list(#dmvs($name), $delim))
+    #set ( $dmvs = $currentPage.metadata.getDynamicField($name).values )
+    $_EscapeTool.xml($_DisplayTool.list($dmvs, $delim))
 #end
