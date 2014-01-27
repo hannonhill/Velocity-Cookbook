@@ -361,7 +361,12 @@
               #else
                 #set ( $checked = "" )
               #end
-              <input id="${fieldId}" name="${name}"${checked} type="${formItemType}" value="${valueWithinForm2.text}">$valueWithinForm2.text  </input>
+              
+              #if ($formItemType == "checkbox")
+                  <input id="${fieldId}" name="${name}[]"${checked} type="${formItemType}" value="${valueWithinForm2.text}">$valueWithinForm2.text  </input>
+              #else
+                  <input id="${fieldId}" name="${name}"${checked} type="${formItemType}" value="${valueWithinForm2.text}">$valueWithinForm2.text  </input>
+              #end
             #end
           #elseif ($formItemType == "textarea")
             <textarea cols="25" name="${name}" rows="5">${formItemDefaultValue}</textarea>
