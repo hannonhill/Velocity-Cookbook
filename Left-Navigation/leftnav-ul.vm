@@ -46,7 +46,7 @@
     <a href="${folderLoc}/index">$_EscapeTool.xml($theFolderTitle.value)</a>
     
     ## Check for child folders
-    #set ( $subfolders = $_XPathTool.selectNodes($folder, "system-page | system-folder") )
+    #set ( $subfolders = $_XPathTool.selectNodes($folder, "system-page[name!=index] | system-folder | system-symlink") )
     #if ( $subfolders.size() > 0 )
         #loopFolder($subfolders)
     #end
@@ -78,7 +78,7 @@
 #set ( $sib = $_XPathTool.selectSingleNode($contentRoot, "/system-index-block") )
 
 ## Gather "system-page" and "system-folder" nodes
-#set ( $items = $_XPathTool.selectNodes($sib, "system-page | system-folder") )
+#set ( $items = $_XPathTool.selectNodes($sib, "system-page[name!=index] | system-folder | system-symlink") )
 
 ## Make the site map
 #if ( $items.size() > 0 )
