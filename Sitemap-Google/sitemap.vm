@@ -1,0 +1,26 @@
+#set ( $pages = $_XPathTool.selectNodes($contentRoot, "//system-page[is-published][last-published-on]") )
+
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+#foreach ( $p in $pages )
+    #set ( $path = $p.getChild("path").value )
+    #set ( $last = $p.getChild("last-modified") )
+    #set ( $freq = $_XPathTool.selectSingleNode($p, "dynamic-metadata[name='frequency']/value") )
+    #set ( $pri  = $_XPathTool.selectSingleNode($p, "dynamic-metadata[name='priority']/value") )
+    <url>
+        <loc>${websiteURL}${path}${extension}</loc>
+        <lastmod>#showDate($last.value, 'yyyy-MM-dd')</lastmod>
+        <changefreq>$_EscapeTool.xml($freq.value)</changefreq>
+        <priority>$_EscapeTool.xml($pri.value)</priority>
+    </url>
+#end
+</urlset>
+
+#macro ( showDate $dateValue $formatString )
+#if ( $dateValue != "" )
+#set ( $dateObject = $_DateTool.getDate($dateValue) )
+#else
+#set ( $dateObject = $_DateTool.getDate() )
+#end
+#set ( $dateString = $_DateTool.format($formatString, $dateObject) )
+${dateString}
+#end

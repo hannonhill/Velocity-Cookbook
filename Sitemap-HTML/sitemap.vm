@@ -1,0 +1,86 @@
+## Macro for displaying page
+#macro ( showPage $page )
+	## Grab page "title"
+	#set ( $pageTitle = $page.getChild("title") )
+	
+	## Grab page "display-name"
+	#set ( $pageDisplayName = $page.getChild("display-name") )
+	
+	#if ( $pageTitle && $pageTitle.value != "" )
+		#set ( $thePageTitle = $pageTitle )
+	#elseif ( $pageDisplayName && $pageDisplayName.value != "" )
+		#set ( $thePageTitle = $pageDisplayName )
+	#else
+		#set ( $thePageTitle = $page.getChild("name") )
+	#end
+	
+	## Get page location
+	#set ( $pageLoc = $page.getChild("link").value )
+	
+	## Cascade Server version 6.10+
+	## Use $_SerializerTool.serialize($thePageTitle, true) for versions previous to 6.10
+	<a href="${pageLoc}">$_EscapeTool.xml($thePageTitle.value)</a>
+	<!-- $page.getChild("link").value -->
+#end
+
+## Macro for displaying folder
+#macro ( showFolder $folder )
+	## Grab folder "title"
+	#set ( $folderTitle = $folder.getChild("title") )
+	
+	## Grab folder "display-name"
+	#set ( $folderDisplayName = $folder.getChild("display-name") )
+	
+	#if ( $folderTitle && $folderTitle.value != "" )
+		#set ( $theFolderTitle = $folderTitle )
+	#elseif ( $folderDisplayName && $folderDisplayName.value != "" )
+		#set ( $theFolderTitle = $folderDisplayName )
+	#else
+		#set ( $theFolderTitle = $folder.getChild("name") )
+	#end
+	
+	## Cascade Server version 6.10+
+	## Use $_SerializerTool.serialize($theFolderTitle, true) for versions previous to 6.10
+	$_EscapeTool.xml($theFolderTitle.value)
+	<!-- $folder.getChild("link").value -->
+	
+	## Check for child folders
+	#set ( $subfolders = $_XPathTool.selectNodes($folder, "system-page | system-folder[descendant::system-page]") )
+	#if ( $subfolders.size() > 0 )
+		#loopFolder($subfolders)
+	#end
+#end
+
+## Macro for processing folder
+#macro ( loopFolder $theFolder )
+	## Check for assets
+	#if ( $theFolder.size() > 0 )
+		<ul>
+		## Loop through folder
+		#foreach ( $item in $theFolder )
+			<li>
+			## Check item type
+			#if ( $item.getName() == "system-page" )
+				#showPage($item)
+			#else ## You're working with another folder
+				#showFolder($item)
+				#loopFolder($item)
+			#end
+			</li>
+		#end
+		</ul>
+	#end
+#end
+
+
+## Abstract out the "system-index-block" node
+#set ( $sib = $_XPathTool.selectSingleNode($contentRoot, "/system-index-block") )
+
+## Gather "system-page" and "system-folder" nodes
+#set ( $items = $_XPathTool.selectNodes($sib, "system-page | system-folder[descendant::system-page]") )
+
+## Make the site map
+#if ( $items.size() > 0 )
+	<h1>Site Map</h1>
+	#loopFolder($items)
+#end
