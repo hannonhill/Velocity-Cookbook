@@ -1,4 +1,4 @@
-**quick-edit.vm**
+**quickedit.vm**
 
 * Creates a direct link back into the CMS for faster editing.
 * Uses the `<last-modified>` information about the page.
