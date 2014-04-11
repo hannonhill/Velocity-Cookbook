@@ -20,7 +20,6 @@
     ## Cascade Server version 6.10+
     ## Use $_SerializerTool.serialize($thePageTitle, true) for versions previous to 6.10
     <a href="${pageLoc}">$_EscapeTool.xml($thePageTitle.value)</a>
-    <!-- $page.getChild("link").value -->
 #end
 
 ## Macro for displaying folder
@@ -42,7 +41,6 @@
     ## Cascade Server version 6.10+
     ## Use $_SerializerTool.serialize($theFolderTitle, true) for versions previous to 6.10
     $_EscapeTool.xml($theFolderTitle.value)
-    <!-- $folder.getChild("link").value -->
 
     ## Check for child folders
     #set ( $subfolders = $_XPathTool.selectNodes($folder, "system-page[$accessCheck] | system-folder[descendant::system-page[$accessCheck]]") )
