@@ -17,6 +17,7 @@
         #set ( $cmsSave = "true")
     #end
 #end
+#set($validFormFields="#buildValidFormFieldsArray()")
 [system-view:external]
 <?php error_reporting(E_ALL);
   if (count($_POST) > 0) { //POSTED FORM, PROCESS IT
@@ -37,7 +38,7 @@
     $form_values = array();             // Holds the values of all fields provided in the submitted data.
     $required_fields = array();         // Holds the field names of fields that are required.
     $invalid_fields = array();          // Holds invalid fields that were found (ie extra POST data).
-    $valid_fields = array(#foreach ($formItem in $formItems)#set($name = "#sanitizeFormFieldName($formItem)")#set($label = "#sanitizeFormFieldLabel($formItem)")'${name.trim()}'=>'${label.trim()}'#if($foreach.hasNext),#end#end);
+    $valid_fields = array(${validFormFields.trim()});   // Holds valid form fields that are allowed to be submitted.
 
     $unsatisfied_fields_message = "";   // Message indicating any unsatisfied required fields.
 
@@ -415,6 +416,13 @@
 [system-view:external]
 <?php }//END NO-POST-FORM-SHOWING ?>
 [/system-view:external]
+#macro (buildValidFormFieldsArray)
+  #foreach ($formItem in $formItems)
+    #set ($name = "#sanitizeFormFieldName($formItem)")
+    #set ($label = "#sanitizeFormFieldLabel($formItem)")
+'${name.trim()}'=>'${_EscapeTool.javascript($label.trim())}'#if($foreach.hasNext),#end
+  #end
+#end
 #macro (sanitizeFormFieldDefaultValue $field)
   $_EscapeTool.xml($field.getChild("default_value").text)
 #end
