@@ -37,7 +37,7 @@
     $form_values = array();             // Holds the values of all fields provided in the submitted data.
     $required_fields = array();         // Holds the field names of fields that are required.
     $invalid_fields = array();          // Holds invalid fields that were found (ie extra POST data).
-    $valid_fields = array(#foreach ($formItem in $formItems)'${formItem.getChild("name").text.replaceAll("\W","_")}'=>'${_EscapeTool.javascript($formItem.getChild("label").text)}'#if($foreach.hasNext),#end#end);
+    $valid_fields = array(#foreach ($formItem in $formItems)#set($name = "#sanitizeFormFieldName($formItem)")#set($label = "#sanitizeFormFieldLabel($formItem)")'${name.trim()}'=>'${label.trim()}'#if($foreach.hasNext),#end#end);
 
     $unsatisfied_fields_message = "";   // Message indicating any unsatisfied required fields.
 
@@ -325,13 +325,15 @@
 
   <table cellpadding="2" summary="FOR LAYOUT ONLY" width="100%">
   #foreach ($formItem in $formItems)
-    #set ($label = "")
-    #set ($label = $formItem.getChild("label").text)
-    #set ($outputOriginal = $formItem.getChild("name").text)
-    #set ($name = $formItem.getChild("name").text.replaceAll("\W","_"))
+    #set ($name = "#sanitizeFormFieldName($formItem)")
+    #set ($name = $name.trim())
+    #set ($defaultValue = "#sanitizeFormFieldDefaultValue($formItem)")
+    #set ($defaultValue = $defaultValue.trim())
+    #set ($label = "#sanitizeFormFieldLabel($formItem)")
+    #set ($label = $label.trim())
     #set ($formItemType = $formItem.getChild("type").text)
     #if ($formItemType =='hidden')
-      <input name="${name}" type="hidden" value="${formItemType}"/>
+      <input name="${name}" type="hidden" value="${defaultValue}"/>
     #else
       <tr>
         <td width="25%">
@@ -344,7 +346,6 @@
         </td>
         <td width="2%"/>
         <td width="70%">
-          #set ($formItemDefaultValue = $formItem.getChild("default_value").text)
           #set ($formItemRequired = "No")
           #set ($formItemRequired = $formItem.getChild("required").getChild("value").text)
           #set ( $formItemType = $formItem.getChild("type").text)
@@ -356,7 +357,7 @@
               #set ( $selected = "" )
               #set ( $valuesWithinForm = $_XPathTool.selectNodes($formItem, "value[string(text()) != '']") )
               #foreach ($valueWithinForm in $valuesWithinForm)
-                #if ($valueWithinForm.text == $formItemDefaultValue)
+                #if ($valueWithinForm.text == $defaultValue)
                   #set ($selected = " selected='selected'")
                 #else
                   #set ( $selected = "" )
@@ -375,7 +376,7 @@
                 #set ($fieldId = "${name}_${foreach.index}")
               #end
 
-              #if ($valueWithinForm2.text == $formItemDefaultValue)
+              #if ($valueWithinForm2.text == $defaultValue)
                 #set ($checked = " checked='checked'")
               #else
                 #set ( $checked = "" )
@@ -388,9 +389,9 @@
               #end
             #end
           #elseif ($formItemType == "textarea")
-            <textarea cols="25" name="${name}" rows="5">${formItemDefaultValue}</textarea>
+            <textarea cols="25" name="${name}" rows="5">${defaultValue}</textarea>
           #else
-            <input id="${name}" name="${name}" type="${formItemType}" value="${formItemDefaultValue}"/>
+            <input id="${name}" name="${name}" type="${formItemType}" value="${defaultValue}"/>
           #end
         </td>
       </tr>
@@ -414,3 +415,18 @@
 [system-view:external]
 <?php }//END NO-POST-FORM-SHOWING ?>
 [/system-view:external]
+#macro (sanitizeFormFieldDefaultValue $field)
+  $_EscapeTool.xml($field.getChild("default_value").text)
+#end
+#macro (sanitizeFormFieldLabel $field)
+  #set ($label = "")
+  #set ($label = $formItem.getChild("label").text)
+  #if ($label && $label != "")
+    ${_EscapeTool.xml($label)}
+  #else
+    ${_EscapeTool.xml($outputOriginal)}
+  #end
+#end
+#macro (sanitizeFormFieldName $field)
+  $field.getChild("name").text.replaceAll("\W","_")
+#end
