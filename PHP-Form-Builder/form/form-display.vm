@@ -339,7 +339,7 @@
       <tr>
         <td width="25%">
           <label for="${name}">
-            #if ($label && $label != "")${label}#else${outputOriginal}#end:
+            ${label}:
             #set ($formItemRequired = 'No')
             #set ($formItemRequired = $formItem.getChild("required").getChild("value").text)
             #if ($formItemRequired == 'Yes')<font color="red">*</font>#end
@@ -432,7 +432,7 @@
   #if ($label && $label != "")
     ${_EscapeTool.xml($label)}
   #else
-    ${_EscapeTool.xml($outputOriginal)}
+    ${_EscapeTool.xml($field.getChild("name").text)}
   #end
 #end
 #macro (sanitizeFormFieldName $field)
