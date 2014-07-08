@@ -333,24 +333,20 @@
     #set ($label = "#sanitizeFormFieldLabel($formItem)")
     #set ($label = $label.trim())
     #set ($formItemType = $formItem.getChild("type").text)
+    #set ($isRequiredField = 'No')
+    #set ($isRequiredField = $formItem.getChild("required").getChild("value").text)
     #if ($formItemType =='hidden')
       <input name="${name}" type="hidden" value="${defaultValue}"/>
     #else
       <tr>
         <td width="25%">
           <label for="${name}">
-            ${label}:
-            #set ($formItemRequired = 'No')
-            #set ($formItemRequired = $formItem.getChild("required").getChild("value").text)
-            #if ($formItemRequired == 'Yes')<font color="red">*</font>#end
+            ${label}:#if ($isRequiredField == 'Yes')<span style="color:red">*</span>#end
           </label>
         </td>
         <td width="2%"/>
         <td width="70%">
-          #set ($formItemRequired = "No")
-          #set ($formItemRequired = $formItem.getChild("required").getChild("value").text)
-          #set ( $formItemType = $formItem.getChild("type").text)
-          #if ($formItemRequired == "Yes")
+          #if ($isRequiredField == "Yes")
             <input name="REQUIRED[]" type="hidden" value="${name.replaceAll("\[\]", "")}"/>
           #end
           #if ($formItemType == "dropdown")
