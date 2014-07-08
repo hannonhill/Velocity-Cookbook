@@ -28,11 +28,13 @@
       <dropdown-item value="checkbox"/>
       <dropdown-item value="radio"/>
       <dropdown-item value="hidden"/>
+      <dropdown-item value="paragraph text"/>
     </text>
     <text identifier="name" label="Name" required="true" help-text="The name of the field. Use [] if the field should belong to an array of fields (ie group of checkboxes)."/>
     <text identifier="label" label="Label" help-text="Enter a more user-friendly label here if the text of the field's label should differ from the field name."/>
     <text identifier="default_value" label="Default Value" help-text="The default value of the field. If supplied for non-text fields, this value will default to checked for checkbox/radio fields or selected for dropdown fields."/>
     <text identifier="value" label="Value" multiple="true" help-text="Used for non-text fields. Defines a group of checkbox/radio fields or dropdown options."/>
+    <text multi-line="true" identifier="content" label="Content"/>
     <text type="checkbox" identifier="required" label="Required Field">
       <checkbox-item value="Yes" checked="true"/>
     </text>
