@@ -313,6 +313,10 @@
     #set ($formItemType = $formItem.getChild("type").text)
     #if ($formItemType =='hidden')
       <input name="${name}" type="hidden" value="${formItemType}"/>
+    #elseif ($formItemType == "paragraph text")
+      <tr><td colspan="3">
+        <p>${_EscapeTool.xml($formItem.getChild("content").text)}</p>
+      </td></tr>
     #else
       <tr>
         <td width="25%">
