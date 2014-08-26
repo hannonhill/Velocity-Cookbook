@@ -1,8 +1,8 @@
 <system-data-structure>
   <text type="checkbox" identifier="results" label="What should this form do with submissions?">
-    <checkbox-item value="send-email"/>
+    <checkbox-item value="send-email" show-fields="ifEmailing"/>
     <checkbox-item value="save-to-excel"/>
-    <checkbox-item value="save-to-cms" checked="true"/>
+    <checkbox-item value="save-to-cms" checked="true" show-fields="resultsFile"/>
   </text>
   <group identifier="resultsFile" label="IF saving results to CMS">
     <asset type="page" identifier="form-config" label="Configuration Page" render-content-depth="10"/>
@@ -20,21 +20,21 @@
   </group>
   <text wysiwyg="true" identifier="opening" label="Form Instructions" required="true"/>
   <group identifier="form_item" label="Form Item" multiple="true">
-    <text type="dropdown" identifier="type" label="Field Type" required="true">
-      <dropdown-item value="text"/>
-      <dropdown-item value="textarea"/>
-      <dropdown-item value="password"/>
-      <dropdown-item value="dropdown"/>
-      <dropdown-item value="checkbox"/>
-      <dropdown-item value="radio"/>
-      <dropdown-item value="hidden"/>
-      <dropdown-item value="paragraph text"/>
+    <text type="dropdown" identifier="type" label="Field Type" default="text" required="true">
+      <dropdown-item value="text" show-fields="form_item/label, form_item/name, form_item/default_value, form_item/required"/>
+      <dropdown-item value="textarea" show-fields="form_item/label, form_item/name, form_item/default_value, form_item/required"/>
+      <dropdown-item value="password" show-fields="form_item/label, form_item/name, form_item/default_value, form_item/required"/>
+      <dropdown-item value="dropdown" show-fields="form_item/label, form_item/value, form_item/name, form_item/default_value, form_item/required"/>
+      <dropdown-item value="checkbox" show-fields="form_item/label, form_item/value, form_item/name, form_item/default_value, form_item/required"/>
+      <dropdown-item value="radio" show-fields="form_item/label, form_item/value, form_item/name, form_item/required, form_item/default_value"/>
+      <dropdown-item value="hidden" show-fields="form_item/name, form_item/default_value, form_item/required"/>
+      <dropdown-item value="paragraph text" show-fields="form_item/content"/>
     </text>
     <text identifier="name" label="Name" required="true" help-text="The name of the field. Use [] if the field should belong to an array of fields (ie group of checkboxes)."/>
     <text identifier="label" label="Label" help-text="Enter a more user-friendly label here if the text of the field's label should differ from the field name."/>
     <text identifier="default_value" label="Default Value" help-text="The default value of the field. If supplied for non-text fields, this value will default to checked for checkbox/radio fields or selected for dropdown fields."/>
-    <text identifier="value" label="Value" multiple="true" help-text="Used for non-text fields. Defines a group of checkbox/radio fields or dropdown options."/>
-    <text multi-line="true" identifier="content" label="Content"/>
+    <text identifier="value" label="Value" multiple="true" required="true" help-text="Used for non-text fields. Defines a group of checkbox/radio fields or dropdown options."/>
+    <text multi-line="true" identifier="content" label="Content" required="true"/>
     <text type="checkbox" identifier="required" label="Required Field">
       <checkbox-item value="Yes" checked="true"/>
     </text>

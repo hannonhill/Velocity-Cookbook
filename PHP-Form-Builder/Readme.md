@@ -103,12 +103,14 @@ A sample of a Form has been included with the corresponding Data Definition and 
     - **checkbox** - checkbox options
     - **radio** - radio buttons
     - **hidden** - hidden field
+    - **paragraph** - arbitrary paragraph text
 8. **"Name"** is the name of the field as well as it's label.
 8. **"Label"** can be provided if you wish to display more user-freindly text for the field's label.
 9. **"Default Value"** will be used to pre-populate text fields. Non-text fields will default this value to checked for chckbox/radio fields and selected for dropdown fields.
 10. For Dropdowns, Checkboxes, and Radio buttons, you must put in values in the **"Value"** text boxes. Make sure one of these Values matches the value entered into the Default Value field if you wish to have one of these checked/selected by default.
-11. **"Required Field"** makes this form item required.
-12. To add another field, press the + at the top left of the **"Form Item"** group box.
-13. If you have **"Send E-mail"** checked to send the results, fill out the Email Addresses you'd like to send it to.
-14. **"Submit Button Text"** is the text on the submit button on the form.
-15. **"Form Confirmation Text"** is the text that will display for users once they have successfully submitted the form.
+11. **"Content"** will be used to populate content for paragraph fields.
+12. **"Required Field"** makes this form item required.
+13. To add another field, press the + at the top left of the **"Form Item"** group box.
+14. If you have **"Send E-mail"** checked to send the results, fill out the Email Addresses you'd like to send it to.
+15. **"Submit Button Text"** is the text on the submit button on the form.
+16. **"Form Confirmation Text"** is the text that will display for users once they have successfully submitted the form.
