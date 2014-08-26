@@ -1,5 +1,7 @@
 #set ( $callingPageData = $_XPathTool.selectSingleNode($contentRoot, "/system-index-block/calling-page/system-page") )
+#set ( $callingPageStructure = $_XPathTool.selectSingleNode($callingPageData, "system-data-structure") )
 #set ( $formConfigContent = $_XPathTool.selectSingleNode($callingPageData, "system-data-structure/resultsFile/form-config/content/system-data-structure"))
+#set ( $formItems = $_XPathTool.selectNodes($callingPageStructure, "form_item") )
 #set ( $waysToSave = $_XPathTool.selectNodes($callingPageData, "system-data-structure/results/value"))
 #set ( $dataDefType = $_XPathTool.selectSingleNode($callingPageData, "system-data-structure/resultsFile/dataDefType").value)
 
@@ -15,6 +17,7 @@
         #set ( $cmsSave = "true")
     #end
 #end
+#set($validFormFields="#buildValidFormFieldsArray()")
 [system-view:external]
 <?php error_reporting(E_ALL);
   if (count($_POST) > 0) { //POSTED FORM, PROCESS IT
@@ -34,6 +37,9 @@
     $form_submitted = true;             // Indicates if the form can be submitted or if it had data entry errors.
     $form_values = array();             // Holds the values of all fields provided in the submitted data.
     $required_fields = array();         // Holds the field names of fields that are required.
+    $invalid_fields = array();          // Holds invalid fields that were found (ie extra POST data).
+    $valid_fields = array(${validFormFields.trim()});   // Holds valid form fields that are allowed to be submitted.
+
     $unsatisfied_fields_message = "";   // Message indicating any unsatisfied required fields.
 
     // Helper array containing POST elements to skip during processing.
@@ -70,79 +76,96 @@
 
     // Go through each POST element and add the information to the message and to the content of the xml file
     foreach ($_POST as $key => $value) {
-      // If this is a field that actually provides the script with submitted content
-      if (!in_array($key, $postKeysToSkip)) {
-        // If the field is an array, combine the values.
-        if (is_array($value)){
-          $value = implode(", ", $value);
-        }
+      // Make sure this is a form field and not a configuration variable.
+      if (in_array($key, $postKeysToSkip)) {
+        continue;
+      }
 
-        // Perform some value sanitization.
-        $value = strip_tags(stripslashes($value));
+      // If this field is not a form field, flag it.
+      if (!array_key_exists($key, $valid_fields)) {
+        $invalid_fields[$key] = $valid_fields[$key];
+        continue;
+      }
 
-        // Record the field and add to the message string.
-        ${_EscapeTool.d}form_fields[$key] = $value;
-        $message .= $key . ": " . $value . "\r\n";
+      // If the field is an array, combine the values.
+      if (is_array($value)){
+        $value = implode(", ", $value);
+      }
 
-        if ($cmsFile) {
-        #if($dataDefType != "Generic")
-          // use this for custom data definition output
-             ${_EscapeTool.d}page['structuredData']['structuredDataNodes']['structuredDataNode'][] = array(
-              'identifier' => $key,
-              'type' => 'text',
-              'text' => $value
-          );
-        #else
-          // use this for generic data definition output:
-          // <system-data-structure>
-          //    <group identifier="field" multiple="true">
-          //        <text identifier="id"/>
-          //        <text identifier="value"/>
-          //    </group>
-          // </system-data-structure>
-          ${_EscapeTool.d}page['structuredData']['structuredDataNodes']['structuredDataNode'][] = array(
-            'identifier' => 'field',
-            'type' => 'group',
-            'structuredDataNodes' => array(
-              'structuredDataNode' => array(
-                array(
-                  'identifier' => 'id',
-                  'text' => $key,
-                  'type' => 'text'),
-                array(
-                  'identifier' => 'value',
-                  'text' => $value,
-                  'type' => 'text')
-              )
+      // Perform some value sanitization.
+      $value = strip_tags(stripslashes($value));
+
+      // Record the field and add to the message string.
+      ${_EscapeTool.d}form_fields[$key] = $value;
+      $message .= $key . ": " . $value . "\r\n";
+
+      if ($cmsFile) {
+      #if($dataDefType != "Generic")
+        // use this for custom data definition output
+           ${_EscapeTool.d}page['structuredData']['structuredDataNodes']['structuredDataNode'][] = array(
+            'identifier' => $key,
+            'type' => 'text',
+            'text' => $value
+        );
+      #else
+        // use this for generic data definition output:
+        // <system-data-structure>
+        //    <group identifier="field" multiple="true">
+        //        <text identifier="id"/>
+        //        <text identifier="value"/>
+        //    </group>
+        // </system-data-structure>
+        ${_EscapeTool.d}page['structuredData']['structuredDataNodes']['structuredDataNode'][] = array(
+          'identifier' => 'field',
+          'type' => 'group',
+          'structuredDataNodes' => array(
+            'structuredDataNode' => array(
+              array(
+                'identifier' => 'id',
+                'text' => $key,
+                'type' => 'text'),
+              array(
+                'identifier' => 'value',
+                'text' => $value,
+                'type' => 'text')
             )
-          );
-        #end
-        }
+          )
+        );
+      #end
+      }
 
-        if ($excelFile) {
-          ${_EscapeTool.d}excelFirstRow[$key] = $key;
-          ${_EscapeTool.d}excelThisRow[$key] = $value;
-        }
+      if ($excelFile) {
+        ${_EscapeTool.d}excelFirstRow[$key] = $key;
+        ${_EscapeTool.d}excelThisRow[$key] = $value;
       }
     }
 
-    // Check required fields to make sure they are valid.
-    foreach ($required_fields as $field) {
-      // If the field is not present or its value is empty, mark it as unsatisfied.
-      if (!array_key_exists($field, $form_fields) || empty($form_fields[$field])) {
-        $unsatisfied_fields_message .= "<li>".$field."</li>";
-      }
-    }
-
-    // Do we have any fields that were not valid?
-    // If so, display an error message containing these fields
-    if (!empty($unsatisfied_fields_message)) {
-      echo "<p><strong>Error: The following required fields were not provided:</strong></p>";
-      echo "<ul>".$unsatisfied_fields_message."</ul>";
-      echo "<p><strong>The form's data was not sent. Please hit the 'Back' button, fill in the required fields mentioned above, and resubmit the form.</strong></p>";
+    // Were invalid fields encountered? If so, display an error message.
+    // Else, check required fields to make sure they are valid.
+    if (count($invalid_fields) > 0) {
+      echo "<p><strong>Error: The following invalid fields were encountered and do not match the original form data:</strong></p>";
+      echo "<ul><li>".implode("</li><li>", $invalid_fields)."</li></ul>";
+      echo "<p><strong>The form's data was not sent. Please hit the 'Back' button and resubmit the form.</strong></p>";
 
       // Update the form submission flag due to the failed validation.
       $form_submitted = false;
+    } else {
+      foreach ($required_fields as $field) {
+        // If the field is not present or its value is empty, mark it as unsatisfied.
+        if (!array_key_exists($field, $form_fields) || empty($form_fields[$field])) {
+          $unsatisfied_fields_message .= "<li>".$field."</li>";
+        }
+      }
+
+      // Display an error message if required fields were not met.
+      if (!empty($unsatisfied_fields_message)) {
+        echo "<p><strong>Error: The following required fields were not provided:</strong></p>";
+        echo "<ul>".$unsatisfied_fields_message."</ul>";
+        echo "<p><strong>The form's data was not sent. Please hit the 'Back' button, fill in the required fields mentioned above, and resubmit the form.</strong></p>";
+
+        // Update the form submission flag due to the failed validation.
+        $form_submitted = false;
+      }
     }
 
     if ($form_submitted) {
@@ -297,20 +320,21 @@
     print(htmlentities("$callingPageData.getChild('system-data-structure').getChild('confirmation_text').text"));
   } else { ?>
 [/system-view:external]
-#set ( $callingPageStructure = $_XPathTool.selectSingleNode($callingPageData, "system-data-structure") )
+
 <form action="[system-asset]${callingPageStructure.getChild('action').getChild('path').text}[/system-asset]?submitted=true" method="POST">
   ${_SerializerTool.serialize($callingPageStructure.getChild('opening'), true)}
 
   <table cellpadding="2" summary="FOR LAYOUT ONLY" width="100%">
-  #set ( $formItems = $_XPathTool.selectNodes($callingPageStructure, "form_item") )
   #foreach ($formItem in $formItems)
-    #set ($label = "")
-    #set ($label = $formItem.getChild("label").text)
-    #set ($outputOriginal = $formItem.getChild("name").text)
-    #set ($output = $formItem.getChild("name").text.replace(" ", "_"))
-    #set ($output2 = $output.replace("/", "_"))
-    #set ($name = $output2)
+    #set ($name = "#sanitizeFormFieldName($formItem)")
+    #set ($name = $name.trim())
+    #set ($defaultValue = "#sanitizeFormFieldDefaultValue($formItem)")
+    #set ($defaultValue = $defaultValue.trim())
+    #set ($label = "#sanitizeFormFieldLabel($formItem)")
+    #set ($label = $label.trim())
     #set ($formItemType = $formItem.getChild("type").text)
+    #set ($isRequiredField = 'No')
+    #set ($isRequiredField = $formItem.getChild("required").getChild("value").text)
     #if ($formItemType =='hidden')
       <input name="${name}" type="hidden" value="${formItemType}"/>
     #elseif ($formItemType == "paragraph text")
@@ -321,19 +345,12 @@
       <tr>
         <td width="25%">
           <label for="${name}">
-            #if ($label && $label != "")${label}#else${outputOriginal}#end:
-            #set ($formItemRequired = 'No')
-            #set ($formItemRequired = $formItem.getChild("required").getChild("value").text)
-            #if ($formItemRequired == 'Yes')<font color="red">*</font>#end
+            ${label}:#if ($isRequiredField == 'Yes')<span style="color:red">*</span>#end
           </label>
         </td>
         <td width="2%"/>
         <td width="70%">
-          #set ($formItemDefaultValue = $formItem.getChild("default_value").text)
-          #set ($formItemRequired = "No")
-          #set ($formItemRequired = $formItem.getChild("required").getChild("value").text)
-          #set ( $formItemType = $formItem.getChild("type").text)
-          #if ($formItemRequired == "Yes")
+          #if ($isRequiredField == "Yes")
             <input name="REQUIRED[]" type="hidden" value="${name.replaceAll("\[\]", "")}"/>
           #end
           #if ($formItemType == "dropdown")
@@ -341,7 +358,7 @@
               #set ( $selected = "" )
               #set ( $valuesWithinForm = $_XPathTool.selectNodes($formItem, "value[string(text()) != '']") )
               #foreach ($valueWithinForm in $valuesWithinForm)
-                #if ($valueWithinForm.text == $formItemDefaultValue)
+                #if ($valueWithinForm.text == $defaultValue)
                   #set ($selected = " selected='selected'")
                 #else
                   #set ( $selected = "" )
@@ -360,7 +377,7 @@
                 #set ($fieldId = "${name}_${foreach.index}")
               #end
 
-              #if ($valueWithinForm2.text == $formItemDefaultValue)
+              #if ($valueWithinForm2.text == $defaultValue)
                 #set ($checked = " checked='checked'")
               #else
                 #set ( $checked = "" )
@@ -373,9 +390,9 @@
               #end
             #end
           #elseif ($formItemType == "textarea")
-            <textarea cols="25" name="${name}" rows="5">${formItemDefaultValue}</textarea>
+            <textarea cols="25" name="${name}" rows="5">${defaultValue}</textarea>
           #else
-            <input id="${name}" name="${name}" type="${formItemType}" value="${formItemDefaultValue}"/>
+            <input id="${name}" name="${name}" type="${formItemType}" value="${defaultValue}"/>
           #end
         </td>
       </tr>
@@ -399,3 +416,25 @@
 [system-view:external]
 <?php }//END NO-POST-FORM-SHOWING ?>
 [/system-view:external]
+#macro (buildValidFormFieldsArray)
+  #foreach ($formItem in $formItems)
+    #set ($name = "#sanitizeFormFieldName($formItem)")
+    #set ($label = "#sanitizeFormFieldLabel($formItem)")
+'${name.trim()}'=>'${_EscapeTool.javascript($label.trim())}'#if($foreach.hasNext),#end
+  #end
+#end
+#macro (sanitizeFormFieldDefaultValue $field)
+  $_EscapeTool.xml($field.getChild("default_value").text)
+#end
+#macro (sanitizeFormFieldLabel $field)
+  #set ($label = "")
+  #set ($label = $formItem.getChild("label").text)
+  #if ($label && $label != "")
+    ${_EscapeTool.xml($label)}
+  #else
+    ${_EscapeTool.xml($field.getChild("name").text)}
+  #end
+#end
+#macro (sanitizeFormFieldName $field)
+  $field.getChild("name").text.replaceAll("\W","_")
+#end
