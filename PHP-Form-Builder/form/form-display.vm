@@ -97,7 +97,7 @@
 
       // Record the field and add to the message string.
       ${_EscapeTool.d}form_fields[$key] = $value;
-      $message .= $key . ": " . $value . "\r\n";
+      $message .= $key . ": " . $value . "<br/>";
 
       if ($cmsFile) {
       #if($dataDefType != "Generic")
