@@ -1,7 +1,0 @@
-#set ( $callingPageData = $_XPathTool.selectSingleNode($contentRoot, "/system-index-block/calling-page/system-page/system-data-structure") )
-#set ( $capturedFormContents = $_XPathTool.selectNodes($callingPageData, "field") )
-#foreach ( $capturedField in $capturedFormContents )
-	$_SerializerTool.serialize($capturedField.getChild("id"), true).replace("_", " "): 
-	$_SerializerTool.serialize($capturedField.getChild("value"), true) 
-	<br />
-#end

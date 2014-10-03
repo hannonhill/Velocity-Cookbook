@@ -1,6 +1,0 @@
-<system-data-structure>
-  <group identifier="field" label="Form Field" multiple="true">
-    <text identifier="id" label="ID"/>
-    <text multi-line="true" identifier="value" label="Value"/>
-  </group>
-</system-data-structure>

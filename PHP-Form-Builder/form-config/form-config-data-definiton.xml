@@ -1,6 +1,0 @@
-<system-data-structure>
-    <text identifier="cascadeAddress" label="Cascade Server URL (If adding a file to Cascade)" default="pathtocms.edu"/>
-    <text identifier="authFilePath" label="Authentication File Path" default="/path/to/auth.php" help-text="For added security, this field should be the path to a local file containing an $auth array that specifies an username and password for the Web Services operations."/>
-    <text identifier="siteName" label="Site Name" default="example.edu"/>
-    <text identifier="contentTypePath" label="Content Type Path" default="example.edu:News Form Submission"/>
-</system-data-structure>
