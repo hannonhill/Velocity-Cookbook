@@ -5,7 +5,7 @@ Before users can create Forms, it is necessary to setup the Content Type for the
 ## Overview of Components
 
 - **Form Content Type** - The actual Page with customizable form field information. The Form will be Published and should have .php extension designated on its Configuration.
-- **Form Config Content Type** - The Page that has secure CMS information that will be utilized by web service calls when handling results from users entering content into the published Form. The Form Config pages should be set to NOT Publishable. This is used as a way of separating secure information from the published Form. It is strongly recommended that the Form Config page be saved in a location only Writable to people who are allowed access to the Username and Password combination to be used by Web Services calls. Users with Read access will be allowed to see the Username but not the Password.
+- **Form Config** - The Block that has CMS information that will be utilized by web service calls when handling results from users entering content into the published Form. The *Authentication File Path* should point to a PHP file on the web server that contains a valid username and password to be used for the Web Services calls. This is used as a way of separating secure information from the published Form. It is strongly recommended that the Form Config block be saved in a location only Writable to people who are allowed access to the Web Services information. 
 - **Optional Results Content Type**
 
 ### Form Content Type
@@ -13,10 +13,18 @@ Before users can create Forms, it is necessary to setup the Content Type for the
 - [Form Data Definition.xml](https://github.com/hannonhill/Velocity-Cookbook/tree/master/PHP-Form-Builder/form/form-data-definition.xml) (Data Definition)
 - [form-display.vm](https://github.com/hannonhill/Velocity-Cookbook/tree/master/PHP-Form-Builder/form/form-display.vm) (Velocity Format)
 
-### Form Config Content Type
+### Form Config
 
 - [Form Config Data Definition.xml](https://github.com/hannonhill/Velocity-Cookbook/tree/master/PHP-Form-Builder/form-config/form-config-data-definition.xml) (Data Definition)
-- [form-config.vm](https://github.com/hannonhill/Velocity-Cookbook/tree/master/PHP-Form-Builder/form-config/form-config.vm) (Velocity Format)
+- Sample authentication file content:
+```
+<?php
+$auth = array(
+    "username" => "user",
+    "password" => "pass"
+);
+?>
+```
 
 ### Optional Results Content Type
 
@@ -32,12 +40,10 @@ Before users can create Forms, it is necessary to setup the Content Type for the
 3. Create a **Data Definition** utilizing the included **Form Data Definiton.xml** file. The XML can be pasted straight into your new Data Definition by clicking the XML tab on the Data Defintion.
 4. Create a **Content Type** for your Forms, assigning the **Configuration Set** that you just created to your new Content Type.
 
-## Creating the Form Config Content Type
+## Creating the Form Config Block
 
-1. Create a **Configuration Set** that utilizes the **Template** with the page layout that you would like your Form Config File to have.
-2. Assign a **Calling Page block** and the **Format** included to the Region in your Configuration that you would like your Form Config File content placed.
-3. Create a **Data Definition** utilizing the included **Form Config.xml** file. The XML can be pasted straight into your new Data Definition by clicking the XML tab on the Data Defintion.
-4. Create a **Content Type** for your Form Config Files, assigning the **Configuration Set** that you just created to your new Content Type.
+1. Create a **Data Definition** utilizing the included **Form Config.xml** file. The XML can be pasted straight into your new Data Definition by clicking the XML tab on the Data Defintion.
+2. Create a **Block** for your Form Config, assigning the **Data Definition** that you just created to your new Block.
 
 ## Storing Results as Pages
 
@@ -70,21 +76,20 @@ The Custom Results Data Definition is basically a recreation of the Form that us
 
 A sample of a Form has been included with the corresponding Data Definition and Velocity Format. The Velocity Format is a basic Format that simply outputs the content of the Data Definition. This format can be written using Velocity or XSLT, any valid HTML can be wrapped around the resulting content as necessary. Once the Data Definition is written to match the Form, the rest is handled like any other Page within Cascade Server.
 
-## How to Use the Form Config (Once it's a Page)
+## How to Use the Form Config Block (Once it's a Block)
 
-1. **Create/Edit** the page.
-2. The **"Username"** field should contain the Username with Site Administration permissions to the Site that will have results files saved to it.
-3. The **"Password"** should contain the password for the Username supplied in the Username field.
-4. **"Cascade Server URL (If adding a file to Cascade)"** will need to be filled in if Form results will be Saved as a Page or Excel file within Cascade Server. The `http(s)://` should be included as well as the `PORT` if applicable.
-5. **"Site Name"** will need to be filled in
-6. **"Content Type Path"** will need to be filled in if the Form results will be saved as a Page within Cascade Server. This designates what Page type the results pages should be when automatically created within Cascade Server. This field should contain the "Site Name:Content Type Path" for the designated Content Type. An example of this would look like, "example.edu:News Form Submission" if the Site name in Cascade Server is "example.edu" and the Content Type that results pages will have is "News Form Submission."
+1. **Create/Edit** the block.
+2. **"Cascade Server URL (If adding a file to Cascade)"** will need to be filled in if Form results will be Saved as a Page or Excel file within Cascade Server. The `http(s)://` should be included as well as the `PORT` if applicable.
+3. The **"Authentication File Path"** field should contain the path to a file containing a valid username and password for a User with Site Administration permissions to the Site that will have results files saved to it.
+4. **"Site Name"** will need to be filled in
+5. **"Content Type Path"** will need to be filled in if the Form results will be saved as a Page within Cascade Server. This designates what Page type the results pages should be when automatically created within Cascade Server. This field should contain the "Site Name:Content Type Path" for the designated Content Type. An example of this would look like, "example.edu:News Form Submission" if the Site name in Cascade Server is "example.edu" and the Content Type that results pages will have is "News Form Submission."
 
 ## How to Use the Form Builder (Once it's a Page)
 
 1. **Create/Edit** the page.
 2. **"Results"** is how the form's input will be handled. Form results can be emailed (send-email), saved to an Excel file within Cascade Server (save-to-excel), and/or saved as page content within Cascade Server (save-to-cms). The related fields for each of these options will need to be filled in depending on how results are to be handled.
 3. The **"IF saving results to CMS"** refers to whether results should be saved as a page within Cascade Server and/or as a Excel file within Cascade Server
-    1. **"Configuration Page"** is the page that contains secure information utilized for handling the results from the form. This is how the proper Config Page (discussed above) should be associated to the Form.
+    1. **"Configuration"** is the block that contains secure information utilized for handling the results from the form. This is how the proper Config Block (discussed above) should be associated to the Form.
     2. **"Choose a file in the folder in which you want to save the file."** is utilized for detemining where the automatically generated results file(s) should be stored within the designated site. The file chosen will NOT be modified.
     3. **"Enter file name to be saved"** is used for naming the automatically generated results file(s).
         - The Excel file will be saved as `filename.csv`. If `filename.csv` already exists due to a previous form entry, results will be saved in the next row within that file. This file can then be downloaded from Cascade Server. The user can then import the file into Excel.
