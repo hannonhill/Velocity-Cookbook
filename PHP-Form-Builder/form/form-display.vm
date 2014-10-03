@@ -19,7 +19,9 @@
 #end
 #set($validFormFields="#buildValidFormFieldsArray()")
 [system-view:external]
-<?php error_reporting(E_ALL);
+<?php 
+  define("AUTH_FILE_PATH", "${formConfigContent.getChild('authFilePath').text}");
+  error_reporting(E_ALL);
   if (count($_POST) > 0) { //POSTED FORM, PROCESS IT
     $message = "";
     $subject = "${callingPageData.getChild('system-data-structure').getChild('ifEmailing').getChild('emailHeading').text}";
@@ -183,131 +185,131 @@
           echo "Error: Email could not be sent...<br />";
         }
       }
-
+      
       // If CMS file or Excel file option was chosen, get CMS information
       if ($cmsFile || $excelFile) {
-        $cascade_address = "${formConfigContent.getChild('cascadeAddress').text}";
-        $username = "${formConfigContent.getChild('username').text}";
-        $password = "${formConfigContent.getChild('password').text}";
-        $fname = "${callingPageData.getChild('system-data-structure').getChild('resultsFile').getChild('xmlFileName').text}";
-        $siteName = "${formConfigContent.getChild('siteName').text}";
-        $client = new SoapClient($cascade_address."/ws/services/AssetOperationService?wsdl", array('trace' => 1));
-      }
+        @include(AUTH_FILE_PATH);
 
-      // If CMS File option was chosen, upload to CMS
-      if ($cmsFile) {
-        $path = "${callingPageData.getChild('system-data-structure').getChild('resultsFile').getChild('formPath').getChild('path').text}";
-        if (!is_null($path) AND ($path != "/")) {
-          $folder = getParentFolderOutOfPath($path);
-          try {
-            $page['name'] = $fname;
-            $page['parentFolderPath'] = $folder;
-            $page['contentTypePath'] = "${formConfigContent.getChild('contentTypePath').text}";
-            $page['siteName'] = $siteName;
+        // If the authentication information is not set after including the authenication file, notify to the user.
+        if (!isset($auth) || !is_array($auth) || !array_key_exists("username", $auth) || !array_key_exists("password", $auth)) {
+          print("Error: There was a problem recording your request. Missing API information.<br />");
+        } else {
+          $cascade_address = "${formConfigContent.getChild('cascadeAddress').text}";
+          $fname = "${callingPageData.getChild('system-data-structure').getChild('resultsFile').getChild('xmlFileName').text}";
+          $siteName = "${formConfigContent.getChild('siteName').text}";
+          $client = new SoapClient($cascade_address."/ws/services/AssetOperationService?wsdl", array('trace' => 1));
 
-            $create_params = array(
-              'authentication' => array( 'password' => $password, 'username' => $username ),
-              'asset' => array(
-                'page' => $page
-                // Uncomment this section if a workflow should be started on creation of a page in Cascade using the form.
-                // WorkflowName can be whatever the user wants.
-                // WorkflowDefinitionPath should be the Workflow to be started.
-                // WorkflowComments may be modified as well.
-                /*,
-                'workflowConfiguration' => array(
-                  'workflowName' => 'New Item',
-                  'workflowDefinitionPath' => 'Create-Edit Workflow',
-                  'workflowComments' => 'Asset created by outside user.'
-                )*/
-               )
-            );
-            try {
-              $client->create($create_params);
-            } catch (Exception $e) {
-              print_r($client->__getLastResponse());
-              print ($e->getMessage());
-              print("Error: File creation request failed to conform to the WSDL.<br />");
-            }
-          } catch (Exception $e) {
-            print_r($client->__getLastResponse());
-            print("Error: File creation request failed to conform to the WSDL.<br />");
-          }
-        }
-      }
-
-      // If Excel option was chosen, upload Excel file to CMS
-      if ($excelFile) {
-        $path = "${callingPageData.getChild('system-data-structure').getChild('resultsFile').getChild('formPath').getChild('path').text}";
-        if (($path != "") AND ($path != "/")) {
-          $folder = getParentFolderOutOfPath($path);
-          $csvFileName = $fname . ".csv";
-          $csvContent = "";
-
-          $create_params = array (
-            'authentication' => array( 'password' => $password, 'username' => $username ),
-            'identifier' => array(
-              'path' => array(
-                'path' => $folder . "/" . $csvFileName,
-                'siteName' => $siteName
-              ),
-              'type' => "file"
-            )
-          );
-
-          $response = $client->read($create_params);
-
-          try {
-            if ($response->readReturn->success == "true") {
-              $csvContent = $response->readReturn->asset->file->data;
-
-              if ($csvContent == "") {
-                $csvContent .= arrayToCSV($excelFirstRow);
-              }
-              $csvContent .= arrayToCSV($excelThisRow);
-
-              $edit_params = array (
-                'authentication' => array( 'password' => $password, 'username' => $username ),
-                'asset' => array(
-                  'file' => array(
-                    'name' => $csvFileName,
-                    'parentFolderPath' => $folder,
-                    'metadataSetPath' => "/Default",
-                    'path' => $folder . "/" . $csvFileName,
-                    'siteName' => $siteName,
-                    'data' => $csvContent
-                  )
-                )
-              );
-
+          // If CMS File option was chosen, upload to CMS
+          if ($cmsFile) {
+            $path = "${callingPageData.getChild('system-data-structure').getChild('resultsFile').getChild('formPath').getChild('path').text}";
+            if (!is_null($path) AND ($path != "/")) {
+              $folder = getParentFolderOutOfPath($path);
               try {
-                $response = $client->edit($edit_params);
-              } catch (Exception $e) {
-                print("Error: File update request failed to conform to the WSDL.<br />");
-              }
-            } else {
-              $csvContent .= arrayToCSV($excelFirstRow);
-              $csvContent .= arrayToCSV($excelThisRow);
+                $page['name'] = $fname;
+                $page['parentFolderPath'] = $folder;
+                $page['contentTypePath'] = "${formConfigContent.getChild('contentTypePath').text}";
+                $page['siteName'] = $siteName;
 
-              $create_params = array (
-                'authentication' => array( 'password' => $password, 'username' => $username ),
-                'asset' => array(
-                  'file' => array(
-                    'name' => $csvFileName,
-                    'parentFolderPath' => $folder,
-                    'siteName' => $siteName,
-                    'metadataSetPath' => "/Default",
-                    'data' => $csvContent
-                  )
-                )
-              );
-              try {
-                $response = $client->create($create_params);
+                $create_params = array(
+                  'authentication' => $auth,
+                  'asset' => array(
+                    'page' => $page
+                    // Uncomment this section if a workflow should be started on creation of a page in Cascade using the form.
+                    // WorkflowName can be whatever the user wants.
+                    // WorkflowDefinitionPath should be the Workflow to be started.
+                    // WorkflowComments may be modified as well.
+                    /*,
+                    'workflowConfiguration' => array(
+                      'workflowName' => 'New Item',
+                      'workflowDefinitionPath' => 'Create-Edit Workflow',
+                      'workflowComments' => 'Asset created by outside user.'
+                    )*/
+                   )
+                );
+                try {
+                  $client->create($create_params);
+                } catch (Exception $e) {
+                  print_r($client->__getLastResponse());
+                  print ($e->getMessage());
+                  print("Error: File creation request failed to conform to the WSDL.<br />");
+                }
               } catch (Exception $e) {
+                print_r($client->__getLastResponse());
                 print("Error: File creation request failed to conform to the WSDL.<br />");
               }
             }
-          } catch (Exception $e) {
-            print("Error: finding folder in CMS.<br />");
+          }
+
+          // If Excel option was chosen, upload Excel file to CMS
+          if ($excelFile) {
+            $path = "${callingPageData.getChild('system-data-structure').getChild('resultsFile').getChild('formPath').getChild('path').text}";
+            if (($path != "") AND ($path != "/")) {
+              $folder = getParentFolderOutOfPath($path);
+              $csvFileName = $fname . ".csv";
+              $csvContent = "";
+
+              $response = $client->read(array(
+                'authentication' => $auth,
+                'identifier' => array(
+                  'path' => array(
+                    'path' => $folder . "/" . $csvFileName,
+                    'siteName' => $siteName
+                  ),
+                  'type' => "file"
+                )
+              ));
+
+              try {
+                if ($response->readReturn->success == "true") {
+                  $csvContent = $response->readReturn->asset->file->data;
+
+                  if ($csvContent == "") {
+                    $csvContent .= arrayToCSV($excelFirstRow);
+                  }
+                  $csvContent .= arrayToCSV($excelThisRow);
+
+                  try {
+                    $response = $client->edit(array(
+                    'authentication' => $auth,
+                    'asset' => array(
+                      'file' => array(
+                        'name' => $csvFileName,
+                        'parentFolderPath' => $folder,
+                        'metadataSetPath' => "/Default",
+                        'path' => $folder . "/" . $csvFileName,
+                        'siteName' => $siteName,
+                        'data' => $csvContent
+                      )
+                    )
+                  ));
+                  } catch (Exception $e) {
+                    print("Error: File update request failed to conform to the WSDL.<br />");
+                  }
+                } else {
+                  $csvContent .= arrayToCSV($excelFirstRow);
+                  $csvContent .= arrayToCSV($excelThisRow);
+
+                  try {
+                    $response = $client->create(array(
+                    'authentication' => $auth,
+                    'asset' => array(
+                      'file' => array(
+                        'name' => $csvFileName,
+                        'parentFolderPath' => $folder,
+                        'siteName' => $siteName,
+                        'metadataSetPath' => "/Default",
+                        'data' => $csvContent
+                      )
+                    )
+                  ));
+                  } catch (Exception $e) {
+                    print("Error: File creation request failed to conform to the WSDL.<br />");
+                  }
+                }
+              } catch (Exception $e) {
+                print("Error: finding folder in CMS.<br />");
+              }
+            }
           }
         }
       }
@@ -317,7 +319,7 @@
       </script>#END-CODE--><?php
     }
   } elseif (isset($_GET['submitted']) AND $_GET['submitted'] == 'true') {  // No POST, form was submitted so show confirmation
-    print(htmlentities("$callingPageData.getChild('system-data-structure').getChild('confirmation_text').text"));
+    ?>${_SerializerTool.serialize($callingPageData.getChild('system-data-structure').getChild('confirmation_text'), true)}<?php
   } else { ?>
 [/system-view:external]
 
