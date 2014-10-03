@@ -5,7 +5,7 @@
     <checkbox-item value="save-to-cms" checked="true" show-fields="resultsFile"/>
   </text>
   <group identifier="resultsFile" label="IF saving results to CMS">
-    <asset type="page" identifier="form-config" label="Configuration Page" render-content-depth="10"/>
+    <asset type="block" identifier="form-config" label="Configuration" render-content-depth="3"/>
     <asset type="file" identifier="formPath" label="Choose a file in the folder in which you want to save the file. NOTE: The file chosen will NOT be modified"/>
     <text identifier="xmlFileName" label="Enter file name to be saved (skip the file extension)" default="Form"/>
     <text type="radiobutton" identifier="dataDefType" label="Results Type" default="Generic" help-text="Data Definition Content Capture Type">
