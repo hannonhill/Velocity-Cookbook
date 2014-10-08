@@ -1,0 +1,22 @@
+#*
+    Takes a valid Locale code (eg en, es, de, fr) and assigns the associated 
+    java.util.Locale to a gloal variable $currentLocale. If the Locale is not
+    found, the system default is used (generally "en").
+
+    @param  $code the Local code
+*#
+#macro(setCurrentLocale $code)
+    ## Loop on all java.util.Locale.availableLocales() and try to find a match with the supplied code.
+    #set ($availableLocales = $_DateTool.getLocale().getAvailableLocales())
+    #foreach ($locale in $availableLocales)
+        #if ($code == $locale)
+            #set ($currentLocale = $locale)
+            #break($foreach)
+        #end
+    #end
+
+    ## If we couldn't find a matching Locale, use the default.
+    #if (!$currentLocale)
+        #set ($currentLocale = $_DateTool.getLocale())
+    #end
+#end
