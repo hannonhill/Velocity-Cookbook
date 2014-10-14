@@ -1,0 +1,137 @@
+#*
+    Abbreviates a String which can contain html tags. It also tries to clean up open tags and html entities. 
+
+    Note: Html tags are not counted in String length.
+
+    Adopted from http://www.displaytag.org/1.2/displaytag/apidocs/org/displaytag/util/HtmlTagUtil.html
+
+    Example Usage:
+
+        #set ( $content = $_SerializerTool.serialize($wysiwygField, true) )
+        #abbreviateHtmlString($content, 500, true)
+
+    @param str full String. null is handled by returning null
+    @param maxLength maximum number of characters (excluding tags)
+    @param byNumberOfWords if true maxLength will be the number of words returned, else maxLength will represent the number of characters.
+    @return abbreviated String
+*#
+#macro (abbreviateHtmlString $str, $maxLength, $byNumberOfWords)
+  #if ($str == "" || $str.length() <= $maxLength )
+    $str
+  #else
+    #set ($sz = $str.length())
+    #set ($szMinusOne = $sz - 1)
+    #set ($newStr = "")
+    #set ($inTag = false)
+    #set ($inTagName = false)
+    #set ($endingTag = false)
+    #set ($count = 0)
+    #set ($chopped = false)
+    #set ($choppedPos = 0) 
+    #set ($entityChars = 0)
+
+    #set ($currentTag = "")
+
+    #set ($openTags = [])
+
+    #foreach ($i in [0..$szMinusOne])
+      #if ($count >= $maxLength) 
+        #set ($chopped = true) 
+        #set ($choppedPos = $i) 
+        #break 
+      #end
+
+      #set ($c = $str.charAt($i))
+
+      #if ($c == "<")
+        #set ($inTag = true)
+        #set ($inTagName = true)
+      #elseif ($inTag)
+        #if ($inTagName && $c == "/")        
+          #if ($currentTag.length() == 0)
+            ## Ending tag found
+            #set ($endingTag = true)
+          #else
+            ## Empty tag, reset and don't save
+            #set ($inTagName = false)            
+          #end
+          #set ($currentTag = "")
+        #elseif ($inTagName && ($c == " " || $c == ">"))
+          #set ($inTagName = false)
+
+          #if (!$endingTag)
+            #set ($_void = $openTags.add(0, $currentTag))
+          #else
+            #set ($_void = $openTags.remove($currentTag))
+          #end
+
+          #set ($currentTag = "")          
+          #set ($endingTag = false)
+          
+          #if ($c == ">")
+            #set ($inTag = false)            
+          #end
+        #elseif ($c == ">")
+          #set ($inTag = false)
+        #elseif ($inTagName)
+          #set ($currentTag = "${currentTag}${c}")
+        #end
+      #else
+        #if ($byNumberOfWords)
+          #if ($c.matches("\s"))
+            #set ($count = $count + 1)
+          #end
+        #else
+          ## Handle entities
+          #if ($c == "&")
+            #set ($entityChars = 1)
+          #elseif ($entityChars == 0)
+            #set ($count = $count + 1)
+          #else
+            ## End entity
+            #if ($entityChars > 0 && $c == ";")
+              #set ($entityChars = 0)
+              #set ($count = $count + 1)
+            #else
+              #set ($entityChars = $entityChars + 1)
+            #end
+
+            ## Assume an unescaped & if entity doesn't close after max 5 chars
+            #if ($entityChars > 5)
+              #set ($count = $count + $entityChars)
+              #set ($entityChars = 0)
+            #end
+          #end
+        #end
+      #end
+
+      #if ($inTag || (!$byNumberOfWords || $count < $maxLength))
+        #set ($newStr = "${newStr}${c}")
+      #end      
+    #end
+
+    #if ($chopped)
+      #set ($newStr = "${newStr}...")
+    #end
+
+    #if ($openTags.size() > 0)
+      ## Quickly fixes closed tags
+      #set ($remainingToken = $str.substring($choppedPos))
+      #set ($openTagsSize = $openTags.size())
+      #set ($openTagsSizeMinusOne = $openTagsSize - 1)
+
+      #foreach ($j in [0..$openTagsSizeMinusOne])
+        #set ($closingTag = $openTags.get($j))
+        #set ($closingTag = "</${closingTag}>")
+
+        ## We only add closing tags that exists in the original String, so we don't have to understand
+        ## html/xhtml differences and keep a list of html unclosed tags
+        #if ($remainingToken.indexOf($closingTag) > -1)        
+          #set ($newStr = "${newStr}${closingTag}")
+        #end
+      #end
+    #end
+
+    $newStr
+  #end
+#end
