@@ -15,10 +15,10 @@ Description of the scripts:
 
 In Velocity, syntax for iteration would be:
 
-#for ($element in $array)
-	## Body
-	## Operations on $element
-#end
+>#for ($element in $array)
+>	## Body
+>	## Operations on $element
+>#end
 
 This is similar to the iteration in Python.
 
