@@ -13,6 +13,7 @@ Description of the scripts:
 
 
 **NOTE about Iteration through Arrays:**
+
 In Velocity, syntax for iteration would be:
 
 ```
