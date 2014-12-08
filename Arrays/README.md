@@ -11,15 +11,16 @@ Description of the scripts:
 
 * LayoutsTable.vm: We use this script for internal surveys about the number of pages using each layout type. This script also demonstrates using associative arrays, with arrays as values. Similar to ArchiveMonthLocatorTool, the associative array lets us store information about the pages. and then access and display them while drawing the table.
 
-**NOTE about Iteration through Arrays:**
 
+**NOTE about Iteration through Arrays:**
 In Velocity, syntax for iteration would be:
 
+```
 #for ($element in $array)
 	## Body
 	## Operations on $element
 #end
-
+```
 This is similar to the iteration in Python.
 
 
