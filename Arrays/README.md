@@ -13,12 +13,8 @@ Description of the scripts:
 
 
 **NOTE about Iteration through Arrays:**
-
 In Velocity, syntax for iteration would be:
-<<<<<<< HEAD
 
-=======
->>>>>>> 8cc511c18e32ae65dd6d49398cf17f35915925b7
 ```
 #for ($element in $array)
 	## Body
