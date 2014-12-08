@@ -9,7 +9,7 @@ Description of the scripts:
 
   [Admissions Dates & Deadlines](http://www.union.edu/admissions/apply/dates/)
 
-  **NOTE:** AdmissionsDates-DataDefinition is the data definition that is being used to generate the XML for calendar events.
+  **NOTE:** AdmissionsDates-DataDefinition.xml is the data definition that is being used to generate the XML for calendar events.
 
 * ArchiveMonthLocatorTool.vm: We use this script to archive news articles of each month. Associative Arrays are highly resourceful here, since it allows us to store information about all articles(name, link, teaser, date), associated with their categories(which are the keys), in just one comprehensive data structure, and then manipulate or access these in any way needed.
 
