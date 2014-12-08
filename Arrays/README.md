@@ -14,12 +14,12 @@ Description of the scripts:
 **NOTE about Iteration through Arrays:**
 
 In Velocity, syntax for iteration would be:
-'''
+```
 #for ($element in $array)
 	## Body
 	## Operations on $element
 #end
-'''
+```
 This is similar to the iteration in Python.
 
 
