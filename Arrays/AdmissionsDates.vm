@@ -1,4 +1,4 @@
-## DISPLAY DATES ADN DEADLINES ON ADMISSIONS PAGE
+## DISPLAY DATES AND DEADLINES ON ADMISSIONS PAGE
 
 #set ( $calendar = $_XPathTool.selectNodes($contentRoot, "/system-data-structure/event") )
 #set ( $now = $_DateTool.getDate() )
@@ -16,7 +16,7 @@
     $_SortTool.addSortCriterion("start-date", "", "number", "ascending", "")  
     $_SortTool.sort($calendar)
   
-    ## GET AND STORE INFO OF EVENTS FROM THE CALENDAR
+    ## GET AND STORE INFO OF EVENTS FROM THE DATA DEFINITION
     #foreach ($event in $calendar)
         #set ( $title = $event.getChild('title-long').value)
         #set ( $page = $event.getChild('page'))
@@ -25,6 +25,9 @@
         #set ( $eventDate = $_DateTool.toDate("MM-dd-yyyy", $event.getChild('start-date').value ))
         
         ## Fill the arrays with all the data!
+        ## NOTE: add() returns a value after adding the value to the array
+        ## $dummy is used to catch this value. Does not serve any other purpose.
+        
         #set($dummy = $titles.add($title))
         #set($dummy = $paths.add($path))
         #set($dummy = $links.add($link))
