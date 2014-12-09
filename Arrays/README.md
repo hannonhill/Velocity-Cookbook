@@ -19,7 +19,8 @@ Description of the scripts:
 
 
 **NOTE:**
-In Velocity, syntax for iteration would be:
+
+* In Velocity, syntax for iteration would be:
 
 ```
 #for ($element in $array)
@@ -29,5 +30,8 @@ In Velocity, syntax for iteration would be:
 ```
 This is similar to the iteration in Python.
 
+* Accessing an array/associative array: $array.get(index)
 
-
+* Adding elements to an array/associative aray:
+**Array:** $array.add($element)
+**Associative Array:** $array.put($key, $value)
