@@ -1,3 +1,8 @@
+## Root domain where website is hosted
+#set ( $websiteURL = "http://www.example.edu" )
+## Page extension
+#set ( $extension = ".html" )
+
 #set ( $pages = $_XPathTool.selectNodes($contentRoot, "//system-page[is-published][last-published-on]") )
 
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
