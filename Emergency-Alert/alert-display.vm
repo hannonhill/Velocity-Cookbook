@@ -1,0 +1,22 @@
+#set ( $alerts = $_XPathTool.selectNodes($contentRoot, "/system-index-block/system-page") )
+
+## Grab Current Date
+#set ( $today = $_DateTool.getDate())
+#set ( $today = $_NumberTool.toNumber($today) )
+
+#foreach ( $alert in $alerts )
+    #set ( $data = $alert.getChild("system-data-structure") )
+    #set ( $active = $data.getChild("active").value )
+    #set ( $link = $alert.getChild("link").value )
+    #set ( $end = $alert.getChild("end-date").value )
+    
+    ## Checks to make sure Alert is Active and has not Expired
+    #if ( $active == "Yes" && ( $_NumberTool.toNumber($end) > $_NumberTool.toNumber($today) ) )
+        #set ( $message = $data.getChild("message").value )
+        <div class="col-md-12" style="background-color: darkgoldenrod;">
+            <p style="padding: 10px;"><strong>Emergency Alert:</strong> <a href="${link}" style="color:#ffffff">${message}</a></p>  
+        </div> 
+    #end
+
+
+#end
