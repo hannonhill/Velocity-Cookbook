@@ -1,0 +1,7 @@
+<system-data-structure>
+	<text type="radiobutton" identifier="active" label="Active">
+		<radio-item value="Yes"/>
+		<radio-item value="No"/>
+	</text>
+	<text multi-line="true" identifier="message" label="Message"/>
+</system-data-structure>
