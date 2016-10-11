@@ -4,6 +4,9 @@
 * Checks if the Emergency Alert is "Active" and has not "Expired"
 * Outputs Active Alert
 
+**Alert-Page-Display.vm**
+
+* Use this Format on the Alert Page itself to display Alert content
 
 **Data-Definition.xml**
 
