@@ -1,0 +1,2 @@
+[system-view:external]<?php include ($_SERVER['DOCUMENT_ROOT']."/path/to/alert.html"); ?>[/system-view:external]
+[system-view:internal]<system-region name="MESSAGE-ALERT"/>[/system-view:internal]
