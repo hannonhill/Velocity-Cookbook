@@ -1,0 +1,8 @@
+#set ( $page = $_XPathTool.selectSingleNode($contentRoot, "/system-index-block/calling-page/system-page") )
+#set ( $data = $_XPathTool.selectSingleNode($page, "system-data-structure") )
+
+#set ( $active = $data.getChild("active").value )
+#set ( $message = $data.getChild("message").value )
+
+<p><strong>Alert Active:</strong> $_EscapeTool.xml($active)</p>
+<p><strong>Alert Message:</strong><br />$_EscapeTool.xml($message)</p>
