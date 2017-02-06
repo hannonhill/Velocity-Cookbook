@@ -1,5 +1,5 @@
 ## Root domain where website is hosted
-#set ( $websiteURL = "http://www.example.edu" )
+#set ( $websiteURL = "https://www.csupueblo.edu" )
 ## Page extension
 #set ( $extension = ".html" )
 
