@@ -10,3 +10,15 @@
 * Creates a plain text breadcrumb with links to Folders. It assumes that each parent Folder has a landing page.
 * Takes into account a check for Display Name and System Name. You won't have to worry about whether or not certain Metadata Fields are filled out. It will fall back to the System Name of the asset if no Display Name is found.
 * Assumes paired Index Block is using "Start at the current page and include its folder hierarchy."
+
+**breadcrumb-currentpage-api-ul.vm**
+
+* Creates an unordered list with links to Folders.
+* Takes into account a check for Display Name, Title and System Name. You won't have to worry about whether or not certain Metadata Fields are filled out. It will fall back to the Title and then System Name of the asset if no Display Name is found.
+* Uses `$currentPage` to avoid the need for using an Index Block
+
+**breadcrumb-currentpage-api.vm**
+
+* Creates a plain text breadcrumb with Folder labels
+* Takes into account a check for Display Name, Title and System Name. You won't have to worry about whether or not certain Metadata Fields are filled out. It will fall back to the Title and then System Name of the asset if no Display Name is found.
+* Uses `$currentPage` to avoid the need for using an Index Block
