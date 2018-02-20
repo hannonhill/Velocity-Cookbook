@@ -1,0 +1,17 @@
+#set($separator = "&#187;")
+#set($crumbs = [$currentPage])
+#set($count = 0)
+#getParentFolders($currentPage)
+#foreach ($crumb in $crumbs)
+  ${_EscapeTool.xml($crumb.label)} #if ($foreach.hasNext)${separator}#end
+#end
+#macro (getParentFolders $asset)
+   #set($parent = $asset.parentFolder)
+   #set($count = $count + 1)
+   #if ($parent.name != "/" && $count < 20)
+       #set($x = $crumbs.add(0, $parent))
+       #getParentFolders($parent)
+   #else
+       #break
+   #end
+#end
