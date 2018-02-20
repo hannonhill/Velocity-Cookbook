@@ -4,7 +4,7 @@
 <ul>
 #foreach ($crumb in $crumbs)
   #if ($foreach.hasNext)  
-    <li><a href="${crumb.link}">${_EscapeTool.xml($crumb.label)}</a></li>
+    <li><a href="${crumb.link}/index">${_EscapeTool.xml($crumb.label)}</a></li>
   #else
     <li>${_EscapeTool.xml($crumb.label)}</li>
   #end
