@@ -1,8 +1,7 @@
 ## System URL without a trailing slash
 #set ( $url = "http://localhost:8080" )
 
-#set ( $page = $_.locatePage($currentPagePath, $currentPageSiteName) )
-#set ( $id   = $page.identifier.id )
-#set ( $date = $_DateTool.format("MM/dd/yyyy", $page.lastModified) )
+#set ( $id   = $currentPage.identifier.id )
+#set ( $date = $_DateTool.format("MM/dd/yyyy", $currentPage.lastModified) )
 
 Last updated: <a href="${url}/entity/open.act?type=page&amp;id=${id}#highlight">${date}</a>
