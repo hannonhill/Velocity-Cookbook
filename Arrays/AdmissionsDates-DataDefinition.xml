@@ -1,0 +1,18 @@
+<system-data-structure>
+    <group identifier="event" label="Event" multiple="true">
+        <text type="calendar" identifier="start-date" label="Date" required="true"/>
+        <text identifier="title-long" label="Title" required="true" size="70"/>
+        <text identifier="title-short" label="Short Title" required="true" maxlength="20" size="50" help-text="20 characters maximum"/>
+        <text type="checkbox" identifier="homepage" label="Display on Admissions homepage">
+            <checkbox-item value="Yes" checked="true"/>
+        </text>
+        <asset type="page" identifier="page" label="Link"/>
+        <text type="dropdown" identifier="category" label="Category" default="Information Session">
+            <dropdown-item value="Information Session"/>
+            <dropdown-item value="Open House"/>
+            <dropdown-item value="Applying"/>
+            <dropdown-item value="Office Hours"/>
+            <dropdown-item value="Miscellaneous"/>
+        </text>
+    </group>
+</system-data-structure>

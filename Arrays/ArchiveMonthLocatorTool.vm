@@ -1,0 +1,123 @@
+## ARCHIVE ALL NEWS ARTICLES OF A MONTH
+
+#set ( $currentMonth = $_XPathTool.selectNodes($contentRoot, "//system-folder[@current='true']/system-page"))
+
+## ------ HASH TABLE OF NEWS ARTICLES -------
+##
+## HASH TABLE FORMAT:
+##          "Category Name": [[Article Titles (Array)], [Links to Articles (Array)], [Start Dates (Array)]]
+##
+## NOTE:
+##          For category "Union in the News", the format is:
+##          "Category Name": [[Article Titles (Array)], [Links to Articles (Array)], [Start Dates (Array)], [Sources (Array)]]
+##
+
+## CATEGORIES OF ARTICLES
+#set ( $categories = {  "Union in the News": [[], [], [], []],
+                        "News Release": [[], [], []],
+                        "Announcements": [[], [], []]
+                    } )
+                    
+## DISPLAY TAG/NAME FOR EACH CATEGORY
+#set ( $displayTags = ["Union in the Media", "News", "Announcements"])
+
+## NOTE: These tags are only for display in the news pages, i.e, "Union in the Media | News | Announcements"
+##       Each tag corresponds to the category above.
+
+## ++++++++++++++++++++++++++++++++++++++
+
+## ------------ INDEXING ARTICLES ----------
+## GET ALL ARTICLES' INFO AND STORE IN ARRAYS
+
+#macro (indexArticles $root $hashtable)
+    #foreach ($article in $root)
+        #set ( $site = $article.getChild('site').value )
+        #set ( $path = $article.getChild('path').value )
+        #set ( $page = $_.locatePage($path, $site) )
+        
+        #set ( $cat = $page.metadata.getDynamicField("category").value)
+        
+        #set ( $title = $page.metadata.title )
+        #set ( $link = $page.path)
+        #set ( $articleDate =  $_DateTool.format("MMMM d", $page.metadata.startDate) )
+        
+        ## DUMP DATA INTO THE HASH TABLE
+        ## add() returns a value. $dummy is used to catch this value. Does not
+        ## serve any other purpose.
+        #set ( $dummy = $hashtable.get($cat).get(0).add($title) )
+        #set ( $dummy = $hashtable.get($cat).get(1).add($link) )
+        #set ( $dummy = $hashtable.get($cat).get(2).add($articleDate) )
+        
+        #if ( $cat == "Union in the News")
+            #set ( $source = $page.metadata.getDynamicField("source").value)
+            #set ( $dummy = $hashtable.get($cat).get(3).add($source) )
+        #end
+    #end
+
+#end
+
+## +++++++++++++++++++++++++++++++++++++++++++
+
+## ------ PRINT ARTICLES OF A CATEGORY -------
+
+#macro (printCategory $category $hashtable)
+    #set ($end = ($hashtable.get($category).get(0).size() - 1))
+
+    #if($hashtable.get($category).get(0).size() > 0)
+
+        #foreach ( $i in [0..$end] )
+            
+            #set ($title = $hashtable.get($category).get(0).get($i))
+            #set ($link = $hashtable.get($category).get(1).get($i))
+            #set ($articleDate = $hashtable.get($category).get(2).get($i))
+            
+            <li>
+            
+            #if ($category == "Union in the News")
+                #set ($source = $hashtable.get($category).get(3).get($i))
+                
+                ${source},
+            #end
+            
+            ${articleDate}
+            <br />
+            
+            <a class="post-title" href="${link}" title="${title} ${articleDate}">
+                ${title}
+            </a>
+            
+            </li>
+        #end
+        
+    #end
+#end
+
+## +++++++++++++++++++++++++++++++++++++++++++++
+
+#indexArticles($currentMonth $categories)
+
+## start at the system index block level
+<p>
+    #foreach ($key in $categories.keySet())
+        #if($categories.get($key).get(0).size() > 0)
+        
+            #set ($tag = $displayTags[$foreach.index])
+            <a href="#${tag}">${tag}</a> | 
+        
+        #end
+    #end
+</p>
+
+#foreach ($key in $categories.keySet())
+    #if($categories.get($key).get(0).size() > 0)
+        
+        #set ($tag = $displayTags[$foreach.index])
+        
+        <a name="${tag}"></a>
+        <h3>${tag}</h3>
+        <ul class="post-list post-list-alt">
+            #printCategory($key $categories)
+        </ul>
+        
+    #end
+#end

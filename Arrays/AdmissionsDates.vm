@@ -1,0 +1,102 @@
+## DISPLAY DATES AND DEADLINES ON ADMISSIONS PAGE
+
+#set ( $calendar = $_XPathTool.selectNodes($contentRoot, "/system-data-structure/event") )
+#set ( $now = $_DateTool.getDate() )
+
+## EVENTS INFO
+#set ($titles = [])
+#set ($paths = [])
+#set ($links = [])
+#set ($eventDates = [])
+
+## Make sure there are events now/in the future
+#if ( $calendar.size() > 0 )
+
+    ## Sort the dates in chronological order
+    $_SortTool.addSortCriterion("start-date", "", "number", "ascending", "")  
+    $_SortTool.sort($calendar)
+  
+    ## GET AND STORE INFO OF EVENTS FROM THE DATA DEFINITION
+    #foreach ($event in $calendar)
+        #set ( $title = $event.getChild('title-long').value)
+        #set ( $page = $event.getChild('page'))
+        #set ( $path = $page.getChild('path').value )
+        #set ( $link = $page.getChild('link').value )
+        #set ( $eventDate = $_DateTool.toDate("MM-dd-yyyy", $event.getChild('start-date').value ))
+        
+        ## Fill the arrays with all the data!
+        ## NOTE: add() returns a value after adding the value to the array
+        ## $dummy is used to catch this value. Does not serve any other purpose.
+        
+        #set($dummy = $titles.add($title))
+        #set($dummy = $paths.add($path))
+        #set($dummy = $links.add($link))
+        #set($dummy = $eventDates.add($eventDate))
+    #end
+
+    ## ADD BUFFER DATA TO THE END OF THE ARRAY TO PREVENT OUT-OF-RANGE EXCEPTIONS
+    #set($dummy = $titles.add("buffer"))
+    #set($dummy = $paths.add("buffer"))
+    #set($dummy = $links.add("buffer"))
+    #set($dummy = $eventDates.add("buffer"))
+
+    #set ($end = $titles.size() - 1)
+    #set ($range = [0..$end])
+    #set ($conFlag = 0)
+      
+    <ul>
+    #foreach ($i in $range)
+        #set ($counter = $foreach.index)
+        
+        #set ( $title = $titles.get($i))
+        #set ( $path = $paths.get($i))
+        #set ( $link = $links.get($i))
+        #set ( $eventDate = $eventDates.get($i))
+        
+        #set ($next = $i + 1)
+        
+        ## Check whether the event has passed
+        #if ($_DateTool.whenIs($eventDate).minutes > 0)
+
+            ## CHECK IF CURRENT EVENT IS SAME AS NEXT EVENT, i.e, CHECK FOR CONSECUTIVE EVENTS.
+            #if ($title == $titles.get($next))
+
+                ## IF WE'RE NOT ALREADY IN CONSECUTIVE-EVENTS-MODE, 
+                ## SWITCH TO IT
+                #if($conFlag == 0)
+                    #set($start = $eventDate)
+                    #set($conFlag = 1)
+                #end
+            #else
+                <li>
+                
+                ## IF CURRENT EVENT != NEXT EVENT, AND WE HAD CONSECUTIVE 
+                ## EVENTS BEFORE, THEN FINALLY DISPLAY THE DATES IN 
+                ## THE FORMAT: "START_DATE - END_DATE: EVENT_NAME"
+                #if($conFlag == 1)
+                    $_DateTool.format('MMM. d', $start) - $_DateTool.format('MMM. d', $eventDate):
+                  
+                    #set($conFlag = 0)
+                #else
+                    ## Print the month and day (e.g. Aug 12)
+                    $_DateTool.format('MMM. d', $eventDate ):
+                #end
+                
+                ## Print the short title with optional link
+                #if ($path != '/')
+                    ## linked title
+                    <a href="${link}">${_EscapeTool.xml($title)}</a>
+                #else
+                    ## just title
+                    ${_EscapeTool.xml($title)}
+                #end
+                </li>
+            #end
+          
+        #end
+
+    #end
+     </ul>
+#else
+    <p>There are no Dates & Deadlines at this time.</p>
+#end
