@@ -17,6 +17,4 @@
             <p style="padding: 10px;"><strong>Emergency Alert:</strong> <a href="${link}" style="color:#ffffff">${message}</a></p>  
         </div> 
     #end
-
-
 #end
