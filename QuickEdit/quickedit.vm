@@ -1,6 +1,5 @@
 ## System URL without a trailing slash
-#set ( $url = "http://localhost:8080" )
-
+#set ( $url = "http://your_environment.cascadecms.com" )
 
 ## Get the system-page 'id'
 #set ( $page = $_XPathTool.selectSingleNode($contentRoot, "/system-index-block/calling-page/system-page") )
@@ -9,7 +8,8 @@
 ## Get the formatted 'last-modified' date
 #set ( $last = $page.getChild("last-modified").value )
 #set ( $obj  = $_DateTool.getDate($last) )
+#set ( $date = $_DateTool.format("MM/dd/yyyy", $obj) )
 
-#set ( $link = "${url}/entity/open.act?type=page&amp;id=${id}#highlight" )
+#set ( $link = $_EscapeTool.xml("${url}/entity/open.act?type=page&id=${id}&action=edit") )
 
-Last updated: <a href="${link}">$_DateTool.format("MM/dd/yyyy", $obj)</a>
+Last updated: <a href="${link}">${date}</a>
