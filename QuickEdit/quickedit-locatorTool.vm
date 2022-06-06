@@ -1,7 +1,8 @@
 ## System URL without a trailing slash
-#set ( $url = "http://localhost:8080" )
+#set ( $url = "http://your_environment.cascadecms.com" )
 
 #set ( $id   = $currentPage.identifier.id )
 #set ( $date = $_DateTool.format("MM/dd/yyyy", $currentPage.lastModified) )
+#set ( $link = $_EscapeTool.xml("${url}/entity/open.act?type=page&id=${id}&action=edit") )
 
-Last updated: <a href="${url}/entity/open.act?type=page&amp;id=${id}#highlight">${date}</a>
+Last updated: <a href="${link}">${date}</a>
