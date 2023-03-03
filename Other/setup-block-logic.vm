@@ -1,8 +1,0 @@
-#set ( $blocks = $_XPathTool.selectNodes($contentRoot, "//system-block[name='setup']") )
-
-#set ( $length = $blocks.size() )
-#if ( $blocks.size() > 0 )
-    #set ( $last = $length - 1 )
-    #set ( $data = $blocks[$last].getChild("system-data-structure") )
-    ## Your code to get data from the setup block
-#end
