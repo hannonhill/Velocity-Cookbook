@@ -1,17 +1,27 @@
-#set($separator = "&#187;")
-#set($crumbs = [$currentPage])
-#set($count = 0)
+##$_PropertyTool.outputProperties($currentPage.parentFolder)
+#set ( $delim = "&#62;" )
+#set ( $crumbs = [$currentPage] )
+#set ( $count = 1 )
 #getParentFolders($currentPage)
-#foreach ($crumb in $crumbs)
-  ${_EscapeTool.xml($crumb.label)} #if ($foreach.hasNext)${separator}#end
+<a href="/index">Home</a>
+#foreach ( $crumb in $crumbs )
+#set ( $pos = $foreach.count + 1 )
+#set ( $name = $_EscapeTool.xml($crumb.label) )
+#if ( $crumb.assetType == "folder" )
+ ${delim}##
+ #if ( $_.locatePage("${crumb.path}/index").path != $currentPage.path )
+  <a href="${crumb.link}/index">${name}</a>##
+ #elseif ( $crumb.name != "index" ) ${name} #end
 #end
-#macro (getParentFolders $asset)
-   #set($parent = $asset.parentFolder)
-   #set($count = $count + 1)
-   #if ($parent.name != "/" && $count < 20)
-       #set($x = $crumbs.add(0, $parent))
+#if ( $crumb.assetType == "page" && $crumb.name != "index" )
+ ${delim} ${name}
+#end
+#end ##/foreach
+#macro ( getParentFolders $asset )
+   #set ( $parent = $asset.parentFolder )
+   #set ( $count = $count + 1 )
+   #if ( $parent.name != "/" && $count < 20 )
+       #set ( $x = $crumbs.add(0, $parent) )
        #getParentFolders($parent)
-   #else
-       #break
-   #end
+   #else #break #end
 #end
