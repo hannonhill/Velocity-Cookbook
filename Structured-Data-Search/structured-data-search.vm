@@ -1,0 +1,54 @@
+##
+## Author:  Charlie Holder
+## Website: https://www.hannonhill.com/
+## Date:    12 July 2023
+## Version: 1.0
+##
+## Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License
+## http://creativecommons.org/licenses/by-nc-sa/4.0/
+##
+## https://developers.google.com/search/docs/appearance/structured-data/intro-structured-data
+##
+## Format: JSON-LD, https://json-ld.org/
+## Vocab:  https://schema.org/docs/full.html
+##         - https://schema.org/CollegeOrUniversity
+##         - https://schema.org/GovernmentOrganization
+## Test:   https://validator.schema.org/
+##
+#set ( $data = $_XPathTool.selectSingleNode($contentRoot, "/system-data-structure") )
+#set ( $type = $data.getChild("schema") )
+#set ( $map = {} )
+$!map.put("@context", "https://schema.org/")##
+$!map.put("@type", $_EscapeTool.xml($type.value))##
+#set ( $plevel1 = $_XPathTool.selectNodes($data, "property") )
+#foreach ( $p1 in $plevel1 )
+    #set ( $n1 = $_EscapeTool.xml($p1.getChild("name").value) )
+    #if ( $p1.getChild("type").value == "text" )
+        #set ( $v1 = $_EscapeTool.xml($p1.getChild("text").value) )
+        $!map.put($n1, $v1)##
+    #else
+        #set ( $map2 = {} )
+        #set ( $plevel2 = $_XPathTool.selectNodes($p1, "property") )
+        #foreach ( $p2 in $plevel2 )
+            #set ( $n2 = $_EscapeTool.xml($p2.getChild("name").value) )
+            #if ( $p2.getChild("type").value == "text" )
+                #set ( $v2 = $_EscapeTool.xml($p2.getChild("text").value) )
+                $!map2.put($n2, $v2)##
+            #else
+                #set ( $map3 = {} )
+                #set ( $plevel3 = $_XPathTool.selectNodes($p2, "property") )
+                #foreach ( $p3 in $plevel3 )
+                    #set ( $n3 = $_EscapeTool.xml($p3.getChild("name").value) )
+                    #set ( $v3 = $_EscapeTool.xml($p3.getChild("text").value) )
+                    $!map3.put($n3, $v3)##
+                #end
+                $!map2.put($n2, $map3)##
+            #end
+        #end
+        $!map.put($n1, $map2)##
+    #end
+#end
+
+<!--#protect<script type="application/ld+json">#protect-->
+$_SerializerTool.toJson($map)
+<!--#protect</script>#protect-->

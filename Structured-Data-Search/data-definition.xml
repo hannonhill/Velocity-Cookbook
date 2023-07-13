@@ -1,0 +1,23 @@
+<system-data-structure>
+	<text identifier="schema" label="Schema Type" required="true"/>
+	<group identifier="property" label="Property" multiple="true">
+		<text identifier="name" label="Name" required="true"/>
+		<text default="text" identifier="type" label="Data Type" required="true" type="radiobutton">
+			<radio-item label="Text Value" show-fields="property/text" value="text"/>
+			<radio-item label="Property" show-fields="property/property" value="property"/>
+		</text>
+		<text identifier="text" label="Text Value" required="true"/>
+		<group collapsed="true" identifier="property" label="Property" multiple="true">
+			<text identifier="name" label="Name" required="true"/>
+			<text default="text" identifier="type" label="Data Type" required="true" type="radiobutton">
+				<radio-item label="Text Value" show-fields="property/property/text" value="text"/>
+				<radio-item label="Property" show-fields="property/property/property" value="property"/>
+			</text>
+			<text identifier="text" label="Text Value" required="true"/>
+			<group collapsed="true" identifier="property" label="Property" multiple="true">
+				<text identifier="name" label="Name" required="true"/>
+				<text identifier="text" label="Text Value" required="true"/>
+			</group>
+		</group>
+	</group>
+</system-data-structure>
