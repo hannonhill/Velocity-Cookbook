@@ -1,5 +1,4 @@
 #set ( $pages = $_XPathTool.selectNodes($contentRoot, "//system-page[is-published][last-published-on]") )
-<!--#protect<?xml version="1.0" encoding="UTF-8"?>#protect-->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 #foreach ( $page in $pages )
     #set ( $link = $page.getChild("link").value )
