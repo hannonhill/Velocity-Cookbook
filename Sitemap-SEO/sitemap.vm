@@ -1,31 +1,12 @@
-## Root domain where website is hosted
-#set ( $websiteURL = "http://www.example.edu" )
-## Page extension
-#set ( $extension = ".html" )
-
 #set ( $pages = $_XPathTool.selectNodes($contentRoot, "//system-page[is-published][last-published-on]") )
-
+<!--#protect<?xml version="1.0" encoding="UTF-8"?>#protect-->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-#foreach ( $p in $pages )
-    #set ( $path = $p.getChild("path").value )
-    #set ( $last = $p.getChild("last-modified") )
-    #set ( $freq = $_XPathTool.selectSingleNode($p, "dynamic-metadata[name='frequency']/value") )
-    #set ( $pri  = $_XPathTool.selectSingleNode($p, "dynamic-metadata[name='priority']/value") )
+#foreach ( $page in $pages )
+    #set ( $link = $page.getChild("link").value )
+    #set ( $last = $page.getChild("last-modified").value )
     <url>
-        <loc>${websiteURL}${path}${extension}</loc>
-        <lastmod>#showDate($last.value, 'yyyy-MM-dd')</lastmod>
-        <changefreq>$_EscapeTool.xml($freq.value)</changefreq>
-        <priority>$_EscapeTool.xml($pri.value)</priority>
+        <loc>[system-asset]${link}[/system-asset]</loc>
+        <lastmod>$_DateTool.format('yyyy-MM-dd',$_DateTool.getDate($last))</lastmod>
     </url>
 #end
 </urlset>
-
-#macro ( showDate $dateValue $formatString )
-#if ( $dateValue != "" )
-#set ( $dateObject = $_DateTool.getDate($dateValue) )
-#else
-#set ( $dateObject = $_DateTool.getDate() )
-#end
-#set ( $dateString = $_DateTool.format($formatString, $dateObject) )
-${dateString}
-#end
