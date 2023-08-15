@@ -1,0 +1,106 @@
+## GENERATE A TABLE WITH NUMBER OF PAGES AND NAMES OF PAGES OF ASSOCIATED WITH GIVEN LAYOUT TYPES.
+
+#set($layouts = $_XPathTool.selectNodes($contentRoot, "//system-page[dynamic-metadata[name='columnLayout']]"))
+
+## NAMES OF PAGES
+#set ($layoutTypesPages = {
+                    "Wide": [],
+                    "Wide, Thin": [],
+                    "Thin, Wide": [],
+                    "Thin, Wide, Thin": [],
+                    "Thin, Wide, Thin (wide)": [],
+                    "Thin, Wide, Thin (no top margin)":[]
+                    })
+
+## LINKS TO PAGES
+#set ($layoutTypesLinks = {
+                    "Wide": [],
+                    "Wide, Thin": [],
+                    "Thin, Wide": [],
+                    "Thin, Wide, Thin": [],
+                    "Thin, Wide, Thin (wide)": [],
+                    "Thin, Wide, Thin (no top margin)":[]
+                    })
+
+## COUNT OF PAGES
+#set ($layoutTypesCount = {
+                    "Wide": 0,
+                    "Wide, Thin": 0,
+                    "Thin, Wide": 0,
+                    "Thin, Wide, Thin": 0,
+                    "Thin, Wide, Thin (wide)": 0,
+                    "Thin, Wide, Thin (no top margin)":0
+                    })
+                    
+#foreach($layout in $layouts)
+    ## GET COUNT, LINKS, AND NAMES OF PAGES HAVING EACH LAYOUT AND STORE IN 
+    ## THE RESPECTIVE ARRAYS.
+    
+    #set($dyn = $layout.getChild("dynamic-metadata"))
+    #set($layoutType = $dyn.getChild("value").value)
+    
+    #set($newCount = $layoutTypesCount.get($layoutType) + 1)
+    #set($dummy = $layoutTypesCount.put($layoutType, $newCount))
+    
+    #set($page = $layout.getChild("title").value.replace('&', "&amp;"))
+    #set($link = $layout.getChild("link").value)
+    #set($dummy = $layoutTypesPages.get($layoutType).add($page))
+    #set($dummy = $layoutTypesLinks.get($layoutType).add($link))
+#end
+
+
+## GET THE LAST/HEIGHEST ROW.
+## THIS IS NEEDED SINCE EACH WE NEED TO WRITE A ROW IN EACH COLUMN OF THE TABLE 
+## IN EACH ITERATION.
+
+#set($highest = 0)
+#foreach($key in $layoutTypesPages.keySet())
+    #if ($highest <= $layoutTypesCount.get($key))
+        #set($highest = $layoutTypesCount.get($key))
+    #end
+#end
+
+#set($highest = $highest - 1)
+
+## DRAW TABLE. JQUERY PLUGINS CAN BE USED TO STYLE THE TABLE 
+## (EX: https://github.com/christianbach/tablesorter)
+
+<table id="table" class="tablesorter">
+    <tbody>
+        <thead>
+            <tr>
+            #foreach($key in $layoutTypesPages.keySet())
+                <th>${key}</th>
+            #end
+            </tr>
+
+            <tr>
+            #foreach($key in $layoutTypesPages.keySet())
+                #set($count = $layoutTypesCount.get($key))
+                <th>${count}</th>
+            #end
+            </tr>
+        </thead>
+        
+    #set($i = 0)
+    #foreach($i in [0..$highest])
+        <tr>
+            #foreach($key in $layoutTypesPages.keySet())
+                #set($size = $layoutTypesCount.get($key))
+                
+                #if($layoutTypesPages.get($key).size() == 0 )
+                    <td></td>
+                #elseif($i >= $layoutTypesPages.get($key).size())
+                    <td></td>
+                #else
+                    #set($pageName = $layoutTypesPages.get($key).get($i))
+                    #set($pageLink = $layoutTypesLinks.get($key).get($i))
+                
+                    <td><a href="${pageLink}" style="color: #fff">${pageName}</a></td>
+                #end
+            #end
+        </tr>
+    #end
+    
+    </tbody>
+</table>
