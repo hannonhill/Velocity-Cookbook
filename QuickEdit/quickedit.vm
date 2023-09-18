@@ -11,5 +11,5 @@
 #set ( $obj  = $_DateTool.getDate($last) )
 
 #set ( $link = "${url}/entity/open.act?type=page&amp;id=${id}#highlight" )
-
-Last updated: <a href="${link}">$_DateTool.format("MM/dd/yyyy", $obj)</a>
+#set ( $lastUpdatedStr = $_DateTool.format("MM/dd/yyyy", $obj) )
+Last updated: [system-view:external]<a href="${link}">${lastUpdatedStr}</a>[/system-view:external][system-view:internal]${lastUpdatedStr}[/system-view:internal]
