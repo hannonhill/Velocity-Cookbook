@@ -3,5 +3,6 @@
 
 #set ( $id   = $currentPage.identifier.id )
 #set ( $date = $_DateTool.format("MM/dd/yyyy", $currentPage.lastModified) )
+#set ( $lastUpdatedStr = $_DateTool.format("MM/dd/yyyy", $obj) )
 
-Last updated: <a href="${url}/entity/open.act?type=page&amp;id=${id}#highlight">${date}</a>
+Last updated: [system-view:external]<a href="${url}/entity/open.act?type=page&amp;id=${id}#highlight">${date}</a>[/system-view:external][system-view:internal]${date}[/system-view:internal]
